@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { renderPagination, IN_MAIN_POPULAR } from './pagination.js';
 import { KEY, MEDIA_TYPE, API } from './constants';
+import { warningRef } from './film-search.js';
 
 // імпорт файлу сховища та запис в змінну ключа
 import * as storageLocal from './local-storage.js';
@@ -24,8 +25,6 @@ getOriginGenres().then(response => {
 
 export const galleryRef = document.querySelector('.js-gallery');
 
-const warning = document.querySelector('.header__warning');
-
 window.addEventListener('load', () => {
   galleryRef.innerHTML = '';
 
@@ -35,13 +34,13 @@ window.addEventListener('load', () => {
       renderPagination(page, pages, IN_MAIN_POPULAR);
     })
     .catch(() => {
-      warning.insertAdjacentHTML(
+      warningRef.insertAdjacentHTML(
         'beforeend',
         `<div class="header__warning-message">Service is temporarily unavailable.</div>`
       );
 
       setTimeout(() => {
-        warning.innerHTML = '';
+        warningRef.innerHTML = '';
       }, 4000);
     });
 });

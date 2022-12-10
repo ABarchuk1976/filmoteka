@@ -1,6 +1,12 @@
 import { renderFilmCards, getPopulars } from './popular.js';
 import spinnerToggle from './spinner';
-import { movieApi } from './film-search.js';
+import { inputRef, searchMovieFetch } from './film-search.js';
+import {
+  renderStorageFilmCards,
+  paginateAllStorage,
+  KEY_WATCHED,
+} from './watched.js';
+import { pagLibraryRef } from './queue.js';
 
 spinnerToggle();
 window.addEventListener('load', spinnerToggle);
@@ -13,7 +19,8 @@ let currentPage = 1;
 
 export const IN_MAIN_POPULAR = 1;
 export const IN_MAIN_SEARCH = 2;
-export const IN_LIBRARY = 0;
+export const IN_LIBRARY_QUEUE = 11;
+export const IN_LIBRARY_WATCHED = 12;
 
 const LEFT_ARROW = '&#8592;';
 const RIGHT_ARROW = '&#8594;';
@@ -25,7 +32,7 @@ export function renderPagination(page, pages, now) {
   let twoNextPage = page + 2;
   let markup = '';
 
-  currentRef = now ? pagMainRef : pagLibRef;
+  currentRef = now < 10 ? pagMainRef : pagLibraryRef;
   currentNow = now;
 
   if (!page || page > pages) return;
@@ -59,7 +66,7 @@ export function renderPagination(page, pages, now) {
   if (page < pages)
     markup += `<li class="js-pagination__arrow-right">${RIGHT_ARROW}</li>`;
 
-  // pagLibRef
+  // pagLibraryRef
   // Here need a ref of Library pagRef
   currentRef.innerHTML = markup;
 }
@@ -74,27 +81,50 @@ currentRef.addEventListener('click', ({ target }) => {
   if (target.classList.contains('js-pagination__button'))
     currentPage = Number(target.textContent);
 
+  console.log(currentNow, currentPage, inputRef.value.trim().toLowerCase());
 
+  let promise = {};
 
-  if (!currentNow) {
-    // console.log('Call function from Library');
-    // renderQueuedFilmCards(page);
-  } else {
-    if (currentNow === 1) {spinnerToggle();
-      getPopulars(currentPage).then(({ page, results, total_pages: pages }) => {
-        renderFilmCards(results);
+  if (currentNow < 10) {
+    console.log('In switch', currentNow);
+    switch (currentNow) {
+      case IN_MAIN_POPULAR:
+        console.log('in Popular');
+        promise = getPopulars;
+        break;
+      case IN_MAIN_SEARCH:
+        console.log('in Search');
+        promise = searchMovieFetch;
+        break;
+    }
 
-        renderPagination(page, pages, currentNow);
-        spinnerToggle();
-
-      });
-    } else {
-      movieApi
-        .searchMovieFetch(currentPage)
+    if (promise)
+      promise(currentPage)
         .then(({ page, results, total_pages: pages }) => {
           renderFilmCards(results);
           renderPagination(page, pages, currentNow);
+        })
+        .catch(() => {
+          warningRef.insertAdjacentHTML(
+            'beforeend',
+            `<div class="header__warning-message">Service is temporarily unavailable.</div>`
+          );
+
+          setTimeout(() => {
+            warning.innerHTML = '';
+          }, 4000);
         });
-    }
+    return;
   }
+
+  let key = '';
+  switch (currentNow) {
+    case IN_LIBRARY_QUEUE:
+      key = KEY_QUEUE;
+    case IN_LIBRARY_WATCHED:
+      key = KEY_WATCHED;
+  }
+
+  const data = paginateAllStorage(key);
+  renderStorageFilmCards(currentPage, data);
 });

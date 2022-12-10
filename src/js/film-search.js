@@ -1,14 +1,4 @@
 import spinnerToggle from './spinner';
-
-const refs = {
-  form: document.querySelector('.header__form'),
-  input: document.querySelector('.header__input'),
-  formButton: document.querySelector('.btn'),
-  gallery: document.querySelector('.js-gallery'),
-  warning: document.querySelector('.header__warning'),
-  inputBtnClear: document.querySelector('.btn-cross'),
-};
-
 import axios from 'axios';
 import {
   renderPagination,
@@ -16,111 +6,95 @@ import {
   IN_MAIN_SEARCH,
 } from './pagination.js';
 import { getPopulars, renderFilmCards, galleryRef } from './popular.js';
-import { KEY } from './constants';
+import { KEY, MEDIA_TYPE, API } from './constants';
 
-const BASE_URL = 'https://api.themoviedb.org/3';
+const formRef = document.querySelector('.header__form');
+export const inputRef = document.querySelector('.header__input');
+// const formButtonRef = document.querySelector('.header__btn-submit');
+export const warningRef = document.querySelector('.header__warning');
+const inputBtnClearRef = document.querySelector('.header__btn-close');
 
-export class searchMovieApi {
-  constructor() {
-    this.searchQuery = '';
-    this.page = 1;
-  }
+let currentQuery = '';
 
-  async searchMovieFetch(page) {
-    const searchMovieParams = new URLSearchParams({
-      api_key: KEY,
-      language: 'en-US',
-      query: `${this.searchQuery}`,
-      page: page,
-      include_adult: false,
-    });
+export async function searchMovieFetch(page) {
+  const searchMovieParams = new URLSearchParams({
+    api_key: KEY,
+    language: 'en-US',
+    query: currentQuery,
+    page: page,
+    include_adult: false,
+  });
 
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/search/movie?${searchMovieParams}`
-      );
+  try {
+    const response = await axios.get(
+      `${API}/search/${MEDIA_TYPE}?${searchMovieParams}`
+    );
 
-      if (response.status !== 200) {
-        throw new Error(response.status);
-      }
-
-      // return response.data.results;
-      return response.data;
-    } catch (error) {
-      console.log(error.message);
+    if (response.status !== 200) {
+      throw new Error(response.status);
     }
-  }
-  get query() {
-    return this.searchQuery;
-  }
 
-  set query(newQuery) {
-    this.searchQuery = newQuery;
-  }
-
-  resetPage() {
-    this.page = 1;
+    // return response.data.results;
+    return response.data;
+  } catch (error) {
+    console.log(error.message);
   }
 }
 
-export const movieApi = new searchMovieApi();
-if (!refs.inputBtnClear) {
-  return;
-}
-refs.inputBtnClear.style.display = 'none';
-function clearSearch() {
-  refs.gallery.innerHTML = '';
-}
 // this function will be call if input or results is empty. No possibility to check at same time, becouse error occured when search string is empty!
-refs.input.addEventListener('input', onInputClear);
+inputRef.addEventListener('input', onInputClear);
+
 function onInputClear(evt) {
-  const inputValue = refs.input.value;
+  const inputValue = inputRef.value;
 
   if (inputValue) {
-    refs.inputBtnClear.style.display = 'block';
+    inputBtnClearRef.style.display = 'block';
 
-    refs.inputBtnClear.addEventListener('click', () => {
-      refs.inputBtnClear.style.display = 'none';
-      refs.input.value = '';
-      return;
+    inputBtnClearRef.addEventListener('click', () => {
+      inputBtnClearRef.style.display = 'none';
+      inputRef.value = '';
     });
   }
 }
+
 function emptyQueryOrNoResults() {
-  refs.warning.insertAdjacentHTML(
+  warningRef.insertAdjacentHTML(
     'beforeend',
     `<div class="header__warning-message">Search result not successful. Enter the correct movie name.</div>`
   );
 
   setTimeout(() => {
-    refs.warning.innerHTML = '';
+    warningRef.innerHTML = '';
   }, 4000);
 
   galleryRef.innerHTML = '';
 
+  console.log('Rendering a Popular');
   getPopulars(1).then(({ page, results, total_pages: pages }) => {
     renderFilmCards(results);
     renderPagination(page, pages, IN_MAIN_POPULAR);
   });
 }
 
-refs.form.addEventListener('submit', onSearchClick);
+formRef.addEventListener('submit', onSearchClick);
 
 function onSearchClick(evt) {
   spinnerToggle();
   evt.preventDefault();
-  movieApi.query = evt.currentTarget.elements.searchQuery.value
+
+  currentQuery = evt.currentTarget.elements.searchQuery.value
     .trim()
     .toLowerCase();
-  // If empty - show Popular
-  if (!movieApi.query) {
+
+  console.log('Ar Listener', !!currentQuery);
+  if (!currentQuery) {
     emptyQueryOrNoResults();
     return;
   }
 
-  movieApi.resetPage();
+  console.log(currentQuery);
 
-  movieApi.searchMovieFetch(1).then(data => {
+  searchMovieFetch(1).then(data => {
     if (!data) return;
     // Destructure Andrii
     const { page, total_pages, results } = data;
@@ -130,13 +104,10 @@ function onSearchClick(evt) {
       emptyQueryOrNoResults();
       return;
     }
-
-    clearSearch();
-
     // renderFilmCards(data); Andrii
     renderFilmCards(results);
     // Add rendering of pagination
     renderPagination(page, total_pages, IN_MAIN_SEARCH);
-    spinnerToggle();
+    // spinnerToggle();
   });
 }
