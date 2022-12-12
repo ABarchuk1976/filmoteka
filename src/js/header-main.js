@@ -29,7 +29,6 @@ const galleryRef = document.querySelector('.js-gallery');
 const pagRef = document.querySelector('.js-pagination');
 const warningRef = document.querySelector('.header__warning');
 const inputRef = document.querySelector('.header__input');
-const inputBtnClearRef = document.querySelector('.header__btn-close');
 const formRef = document.querySelector('.header__form');
 
 let currentQuery = '';
@@ -139,6 +138,10 @@ formRef.addEventListener('submit', evt => {
 
   getAPIData(currentPage, nowAt)
     .then(({ page, results, total_pages: pages }) => {
+      if (!pages) {
+        emptyQueryOrNoResults();
+        return;
+      }
       renderFilmCards(results, galleryRef);
       renderPagination(page, pages, pagRef);
     })
@@ -152,4 +155,21 @@ formRef.addEventListener('submit', evt => {
         warningRef.innerHTML = '';
       }, 4000);
     });
+});
+
+inputRef.addEventListener('input', evt => {
+  const query = evt.target;
+  const inputBtnClearRef = document.querySelector('.header__btn-clear');
+
+	if (query.value.length) {
+		inputBtnClearRef.classList.remove('hidden');	
+	}
+
+	inputBtnClearRef.addEventListener('click', onClearInput);
+	
+	function onClearInput(evt) {
+    query.value = '';
+		inputBtnClearRef.classList.add('hidden');	
+		inputBtnClearRef.removeEventListener('click', onClearInput);
+  }
 });
