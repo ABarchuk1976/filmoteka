@@ -1,9 +1,7 @@
-import './js/pagination';
-import './js/popular';
-import './js/film-search';
-import './js/open-model';
-import './js/trailer';
-import './js/modal-team';
-import './js/btn-scroll';
-
-
+import './js/popular.js';
+import './js/open-model.js';
+import './js/trailer.js';
+import './js/modal-team.js';
+import './js/btn-scroll.js';
+import './js/header-main.js';
+import './js/header-library.js';

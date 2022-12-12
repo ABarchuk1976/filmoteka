@@ -1,7 +1,6 @@
-import './js/modal-team';
-import './js/btn-scroll';
-import './js/watched';
-import './js/queue';
-import './js/local-storage-set';
-import './js/trailer';
-import './js/open-modal-library';
+import './js/modal-team.js';
+import './js/btn-scroll.js';
+import './js/local-storage-set.js';
+import './js/trailer.js';
+import './js/open-modal-library.js';
+import './js/header-library.js';

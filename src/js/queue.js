@@ -1,31 +1,27 @@
-import { emptyRef, btnWatchRef } from './watched';
+// import { emptyRef, btnWatchRef, renderStorageFilmCards } from './watched.js';
+// import { IN_LIBRARY_QUEUE } from './constants.js';
 
-import { renderStorageFilmCards } from './watched';
+// export const btnQueueRef = document.querySelector('button[data-name="queue"]');
+// console.log('btnQueueRef', btnQueueRef);
 
-export const btnQueueRef = document.querySelector('.js-queue');
-export const pagLibraryRef = document.querySelector('.js-pagination-library');
+// export const KEY_QUEUE = 'QueueMovies';
 
-export const KEY_QUEUE = 'QueueMovies';
-// const QUEUE_KEY = 'QueueMovies';
+// window.addEventListener('load', () => onBtnQueueClick());
 
-window.addEventListener('load', () => onBtnQueueClick());
+// export function onBtnQueueClick() {
+//   btnQueueRef.classList.add('active');
+//   btnWatchRef.classList.remove('active');
+//   try {
+//     let queueFilms = localStorage.getItem('QueueMovies');
+//     if (queueFilms) {
+//       queueFilms = JSON.parse(queueFilms);
+//       const allData = paginateAllStorage(KEY_QUEUE);
+//       renderStorageFilmCards(1, allData);
 
-btnQueueRefs.addEventListener('click', onBtnQueueClick);
-
-export function onBtnQueueClick() {
-  btnQueueRef.classList.add('filter__button--active');
-  btnWatchRef.classList.remove('filter__button--active');
-  try {
-    let queueFilms = localStorage.getItem('QueueMovies');
-    if (queueFilms) {
-      queueFilms = JSON.parse(queueFilms);
-      const allData = paginateAllStorage(KEY_WATCHED);
-      renderStorageFilmCards(1, allData);
-
-      emptyRef.classList.add('is-hidden');
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  return;
-}
+//       emptyRef.classList.add('is-hidden');
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+//   return;
+// }

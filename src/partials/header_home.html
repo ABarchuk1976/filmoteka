@@ -22,20 +22,21 @@
       </nav>
       <div class="header__container-form">
         <form class="header__form">
+          <button class="header__btn-close is-hidden" type="button">
+            <svg class="header__icon" width="26" height="26">
+              <use href="./images/sprite.svg#close" fill="ffffff"></use>
+            </svg>
+          </button>
           <input
             type="text"
             class="header__input"
+            autocomplete="off"
             name="searchQuery"
             placeholder="Movie search"
           />
           <button class="header__btn-submit" type="submit">
             <svg class="header__icon" width="12" height="12">
               <use href="./images/sprite.svg#search"></use>
-            </svg>
-          </button>
-          <button class="header__btn-close" type="button">
-            <svg class="header__icon-cross" width="12" height="12">
-              <use href="./images/sprite.svg#close"></use>
             </svg>
           </button>
         </form>

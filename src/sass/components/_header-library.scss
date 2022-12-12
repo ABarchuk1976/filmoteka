@@ -1,3 +1,9 @@
+.header__form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .header-library {
   height: 230px;
   background-position: center;
@@ -53,20 +59,21 @@
   justify-content: center;
 }
 
-.filter__item:not(:last-child) {
-  margin-right: 19.94px;
+.filter__item-watched {
+  margin-right: 20px;
   @include for-tablet-up {
     margin-right: 15px;
   }
 }
 
-.filter__button {
+.filter__item-queue,
+.filter__item-watched {
   width: 130px;
   height: 44px;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 14px 36px 12px;
+  // padding: 14px 36px;
   min-width: 130px;
   font-weight: 500;
   line-height: 1.33333;
@@ -75,15 +82,24 @@
   background: transparent;
   border: 1px solid var(--secondary-text-color);
   border-radius: 5px;
+  cursor: pointer;
 
   @include for-tablet-up {
-    padding-left: 38px;
-    padding-right: 38px;
+    // padding: 38px 36px;
     min-width: 136px;
+  }
+
+  transition: background-color var(--transition-time) var(--cubic);
+
+  &.active,
+  &:hover,
+  &:focus {
+    background-color: var(--accent-text-color);
+    border-color: var(--accent-text-color);
   }
 }
 
-.filter__button--active,
+.filter__button.active,
 .filter__button:hover,
 .filter__button:focus {
   border: 1px solid var(--accent-elem-color);
