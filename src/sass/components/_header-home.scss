@@ -122,6 +122,13 @@
 }
 
 .header__input {
+	min-width: 220px;
+  @media screen and (min-width: 768px) {
+    min-width: 276px;
+  }
+  @media screen and (min-width: 1280px) {
+    min-width: 334px;
+  }
   font-size: 14px;
   border: none;
   background-color: transparent;
@@ -162,12 +169,12 @@
   }
 }
 
-.header__btn-clear.hidden {
-  display: none;
+.header__btn-submit {
+	margin-left: auto;
 }
 
-.header__btn-submit {
-  margin-left: auto;
+.header__btn-clear.hidden {
+  display: none;
 }
 
 .header__container-form {

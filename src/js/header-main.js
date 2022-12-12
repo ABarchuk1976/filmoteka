@@ -164,6 +164,10 @@ inputRef.addEventListener('input', evt => {
 	if (query.value.length) {
 		inputBtnClearRef.classList.remove('hidden');	
 	}
+	else {
+		inputBtnClearRef.classList.add('hidden');	
+		inputBtnClearRef.removeEventListener('click', onClearInput);
+	};
 
 	inputBtnClearRef.addEventListener('click', onClearInput);
 	
