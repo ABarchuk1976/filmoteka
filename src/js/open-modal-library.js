@@ -1,8 +1,6 @@
 import * as storageLocal from './local-storage.js';
 import ModalFilm from './modal-film.js';
 import { sendWatchedToStorage, sendQueueToStorage} from "./local-storage-set";
-import {onBtnQueueClick} from './queue.js';
-import {onBtnWatchedClick} from './watched.js';
 const refs = {
   gallery: document.querySelector('.js-gallery'),
   closeBtn: document.querySelector('[data-modal-close]'),

@@ -33,7 +33,8 @@ const formRef = document.querySelector('.header__form');
 
 let currentQuery = '';
 let currentPage = 1;
-let nowAt = 1;
+// 1 - popular, 0 - search
+let nowAt = 1; 
 
 window.addEventListener('load', () => {
   galleryRef.innerHTML = '';

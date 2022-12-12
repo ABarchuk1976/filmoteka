@@ -1,39 +1,50 @@
 import { getGenre } from './modal-film.js';
-import { IN_LIBRARY_WATCHED, IN_LIBRARY_QUEUE } from './constants.js';
+import {
+  KEY,
+  IMG_PATH,
+  SMALL_SIZE,
+  NO_IMAGE,
+} from './constants.js';
 
-const IMG_PATH = 'https://image.tmdb.org/t/p/';
-const SMALL_SIZE = 'w500';
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
 const PER_PAGE = 6;
+// 1 - queue, 0 - watched
+let nowAt = 1;
 
 const buttonsRef = document.querySelector('.filter__list');
 const queueRef = document.querySelector('.filter__item-queue');
 const watchedRef = document.querySelector('.filter__item-watched');
 const pagLibraryRef = document.querySelector('.js-pagination-library');
 const emptyRef = document.querySelector('.empty-list');
-export const galleryLibrary = document.querySelector('.js-gallery-library');
+const galleryLibrary = document.querySelector('.js-gallery-library');
 
-buttonsRef.addEventListener('click', onBtnClick);
+queueRef.addEventListener('click', onBtnClick);
+watchedRef.addEventListener('click', onBtnClick);
 
 function onBtnClick(evt) {
-  const target = evt.target;
-  let key = KEY_QUEUE;
-  let nowAt = IN_LIBRARY_QUEUE;
+	const target = evt.target;
+	if (target.tagName !== 'LI') return;
 
-  if (target.tagName !== 'LI') return;
+	nowAt = target.classList.contains('filter__item-queue') ? 1 : 0;
+  
+  let key = nowAt ? KEY_QUEUE : KEY_WATCHED;
 
-  if (target.textContent.toLowerCase() === 'watched') {
-    key = KEY_WATCHED;
-    nowAt = IN_LIBRARY_WATCHED;
-    target.classList.add('active');
-  }
-  // const key =
-  btnQueueRef.classList.remove('filter__button--active');
-  btnWatchRef.classList.add('filter__button--active');
+	if (nowAt) {
+		queueRef.classList.add('active');
+		watchedRef.classList.remove('active');
+	} 
+	else {
+		watchedRef.classList.add('active');
+		queueRef.classList.remove('active');
+	};
+
   try {
-    const allData = paginateAllStorage(KEY_WATCHED);
-    renderStorageFilmCards(1, allData);
+    const allData = paginateAllStorage(key);
+
+		console.log(allData);
+
+    // renderStorageFilmCards(1, allData);
 
     emptyRef.classList.add('is-hidden');
   } catch (error) {
@@ -43,7 +54,7 @@ function onBtnClick(evt) {
 
 export function renderStorageFilmCards(page, data) {
   const markup = data[page - 1]
-    .map(({ poster_path, genre_ids, title, release_date }) => {
+    .map(({ id, poster_path, genre_ids, title, release_date }) => {
       let genresStr = getGenre(genre_ids);
       let year = release_date.substring(0, 4);
       if (genresStr && year) genresStr += ' | ';
