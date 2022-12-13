@@ -6,8 +6,8 @@ import { Grid } from '@splidejs/splide-extension-grid';
 import '@splidejs/splide/dist/css/themes/splide-sea-green.min.css';
 
 const teamSplide = new Splide('.splide', {
-  type: 'slide',
-  // perPage: 4,
+  type: 'loop',
+  autoplay: true,
   rewind: false,
   height: '290px',
   width: '900px',
@@ -59,7 +59,6 @@ function teamModalShow(evt) {
     modalPoster.classList.add('is-hidden');
     modalPosterImg.classList.add('is-hidden');
     modal.classList.toggle('is-hidden');
-    // document.body.classList.toggle('body--modal-open');
   }, 2000);
 
   document.addEventListener('keydown', onEscModalTeam);

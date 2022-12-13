@@ -13,6 +13,16 @@
   font-weight: 500;
 }
 
+.js-pagination__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  color: inherit;
+  cursor: pointer;
+}
+
 .js-pagination__arrow-left,
 .js-pagination__arrow-right {
   display: flex;
@@ -53,16 +63,6 @@
   padding: 16px;
   color: inherit;
   cursor: none;
-}
-
-.js-pagination__button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  color: inherit;
-  cursor: pointer;
 }
 
 .js-pagination__button-current {

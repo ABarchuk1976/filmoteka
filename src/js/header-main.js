@@ -3,18 +3,6 @@ import spinnerToggle from './spinner.js';
 
 import { renderPagination, getAPIData, renderFilmCards } from './common.js';
 
-import {
-  KEY,
-  MEDIA_TYPE,
-  API,
-  TIME_WINDOW,
-  TRENDING,
-  IMG_PATH,
-  SMALL_SIZE,
-  NO_IMAGE,
-  ADULT,
-} from './constants.js';
-
 // імпорт файлу сховища та запис в змінну ключа
 import * as storageLocal from './local-storage.js';
 const FILM_CURRENT_PAGE = 'film-current-page';

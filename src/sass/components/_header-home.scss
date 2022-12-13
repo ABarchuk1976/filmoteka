@@ -122,7 +122,7 @@
 }
 
 .header__input {
-	min-width: 220px;
+  min-width: 220px;
   @media screen and (min-width: 768px) {
     min-width: 276px;
   }
@@ -161,7 +161,7 @@
   outline: none;
   border: none;
 
-  transition: scale(1) var(--transition-time) var(--cubic);
+  transition: scale var(--transition-time) var(--cubic);
 
   &:hover,
   &:focus {
@@ -170,7 +170,7 @@
 }
 
 .header__btn-submit {
-	margin-left: auto;
+  margin-left: auto;
 }
 
 .header__btn-clear.hidden {
@@ -241,57 +241,37 @@
 .btn-up,
 .btn-bottom {
   position: fixed;
+  right: 10px;
+  bottom: 10px;
   justify-content: center;
   cursor: pointer;
-  right: 10px;
-  bottom: 200px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
   background-color: var(--accent-elem-color);
   opacity: 1;
-  bottom: 10px;
+  transform: rotate(0);
 }
 
-.btn-bottom::after,
-.btn-bottom::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(50%, -50%);
+.btn-up {
+  border-radius: 50% 0 50% 50%;
+  transition: opacity var(--transition-time) var(--cubic),
+    rotate var(--transition-time) var(--cubic);
+  &:hover,
+  &:focus {
+    transform: rotate(-45deg);
+    opacity: 0.5;
+  }
 }
 
-.btn-bottom::after {
-  width: 15px;
-  height: 15px;
-  transform: translate(50%, 50%) rotate(45deg);
-  border-bottom: 5px solid white;
-  border-right: 5px solid white;
-}
-
-.btn-up::before,
-.btn-up::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(50%, -50%);
-}
-
-.btn-up::after {
-  width: 15px;
-  height: 15px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  border-top: 5px solid white;
-  border-left: 5px solid white;
-}
-.btn-bottom::after {
-  width: 15px;
-  height: 15px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  border-bottom: 5px solid white;
-  border-right: 5px solid white;
+.btn-bottom {
+  border-radius: 50% 50% 0 50%;
+  transition: opacity(1) var(--transition-time) var(--cubic),
+    rotate(0) var(--transition-time) var(--cubic);
+  &:hover,
+  &:focus {
+    transform: rotate(45deg);
+    opacity: 0.5;
+  }
 }
 
 .btn-up_hide {
@@ -299,20 +279,4 @@
 }
 .btn-bottom_hide {
   display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn-up:hover {
-    background-color: gray;
-
-    opacity: 0.6;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn-bottom:hover {
-    background-color: gray;
-
-    opacity: 0.6;
-  }
 }

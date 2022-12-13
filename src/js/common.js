@@ -93,6 +93,7 @@ export async function getAPIData(page, now) {
 }
 
 export function renderFilmCards(data, ref) {
+  ref.innerHTML = '';
   let markup = data
     .map(({ id, poster_path, genre_ids, title, release_date }) => {
       let genresStr = getGenre(genre_ids);

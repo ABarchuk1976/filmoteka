@@ -6,6 +6,7 @@ const PER_PAGE = 6;
 // 1 - queue, 0 - watched
 let nowAt = 1;
 let allData = [];
+let currentPage = 1;
 
 const queueRef = document.querySelector('.filter__item-queue');
 const watchedRef = document.querySelector('.filter__item-watched');
@@ -16,6 +17,7 @@ const galleryLibrary = document.querySelector('.js-gallery-library');
 
 window.addEventListener('load', () => {
   queueRef.click();
+  currentPage = 1;
 });
 
 queueRef.addEventListener('click', onBtnClick);
@@ -25,6 +27,7 @@ function onBtnClick(evt) {
   const target = evt.target;
 
   nowAt = target.classList.contains('filter__item-queue') ? 1 : 0;
+  currentPage = 1;
 
   let key = nowAt ? KEY_QUEUE : KEY_WATCHED;
 
@@ -40,19 +43,17 @@ function onBtnClick(evt) {
     allData.length = 0;
     allData = [...paginateAllData(key)];
 
-    console.log(allData[0]);
-
     if (!allData || !allData.length) {
       throw 'Your film list is empty';
     }
 
-    renderFilmCards(allData[0], galleryLibrary);
-    renderPagination(1, allData.length, pagLibraryRef);
+    renderFilmCards(allData[currentPage - 1], galleryLibrary);
+    renderPagination(currentPage, allData.length, pagLibraryRef);
 
     emptyRef.classList.add('is-hidden');
   } catch (error) {
     emptyRef.classList.remove('is-hidden');
-    emptyTitleRef.textContent = error.message;
+    emptyTitleRef.textContent = 'Your film list is empty';
   }
 }
 
@@ -73,5 +74,34 @@ function paginateAllData(key) {
     }
   } catch (error) {
     console.log(error.message);
+  }
+}
+
+pagLibraryRef.addEventListener('click', onClickPagination);
+
+function onClickPagination(evt) {
+  const target = evt.target;
+
+  if (target.textContent === '...' || target.tagName !== 'LI') return;
+
+  if (target.classList.contains('js-pagination__arrow-left')) currentPage -= 1;
+
+  if (target.classList.contains('js-pagination__arrow-right')) currentPage += 1;
+
+  if (target.classList.contains('js-pagination__button'))
+    currentPage = Number(target.textContent);
+
+  try {
+    if (!allData || !allData.length) {
+      throw 'Your film list is empty';
+    }
+
+    renderFilmCards(allData[currentPage - 1], galleryLibrary);
+    renderPagination(currentPage, allData.length, pagLibraryRef);
+
+    emptyRef.classList.add('is-hidden');
+  } catch (error) {
+    emptyRef.classList.remove('is-hidden');
+    emptyTitleRef.textContent = error.message;
   }
 }
