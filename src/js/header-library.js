@@ -1,4 +1,4 @@
-import { renderPagination, renderFilmCards } from './common.js';
+import { renderPagination, renderFilmCards, goUp } from './common.js';
 
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
@@ -104,4 +104,6 @@ function onClickPagination(evt) {
     emptyRef.classList.remove('is-hidden');
     emptyTitleRef.textContent = error.message;
   }
+
+  goUp();
 }

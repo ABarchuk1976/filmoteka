@@ -1,65 +1,53 @@
-
-const btnUp = {
+export const btnUp = {
   el: document.querySelector('.btn-up'),
   show() {
-  
     this.el.classList.remove('btn-up_hide');
   },
   hide() {
-
     this.el.classList.add('btn-up_hide');
   },
   addEventListener() {
-   
-    window.addEventListener('scroll', () => {
-   
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-    
-      scrollY > 400 ? this.show() : this.hide();
+    window.addEventListener('mousewheel', e => {
+      e.wheelDelta < 0 ? this.hide() : this.show();
     });
-    
-    document.querySelector('.btn-up').onclick = () => {
-   
+
+    this.el.onclick = () => {
       window.scrollTo({
         top: 0,
         left: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
-    }
-  }
-}
+      this.hide();
+      btnBottom.show();
+    };
+  },
+};
 
 btnUp.addEventListener();
 
-const btnBottom = {
-   el: document.querySelector('.btn-bottom'),
+export const btnDown = {
+  el: document.querySelector('.btn-bottom'),
   show() {
-  
     this.el.classList.remove('btn-bottom_hide');
   },
   hide() {
-
     this.el.classList.add('btn-bottom_hide');
   },
   addEventListener() {
-   
-    window.addEventListener('scroll', () => {
-   
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-    
-      scrollY < 400 ? this.show() : this.hide();
+    window.addEventListener('mousewheel', e => {
+      e.wheelDelta < 0 ? this.show() : this.hide();
     });
-     document.querySelector('.btn-bottom').onclick = () => {
-   
+
+    this.el.onclick = () => {
       window.scrollTo({
-        top: 5000,
+        top: document.documentElement.offsetHeight - 80,
         left: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
-    }
-  }
-}
+      this.hide();
+      btnUp.show();
+    };
+  },
+};
 
-
-btnBottom.addEventListener();
-
+btnDown.addEventListener();

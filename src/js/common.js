@@ -13,11 +13,18 @@ import {
   NO_IMAGE,
 } from './constants.js';
 import { getGenre } from './modal-film';
+import { btnUp, btnDown } from './btn-scroll.js';
 
 const LEFT_ARROW = '&#8592;';
 const RIGHT_ARROW = '&#8594;';
 
 const searchQuery = document.querySelector('.header__input');
+
+export function goUp() {
+  btnUp.el.click();
+  btnUp.hide();
+  btnDown.show();
+}
 
 export function renderPagination(page, pages, ref) {
   let prevPage = page - 1;

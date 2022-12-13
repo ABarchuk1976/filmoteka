@@ -10,17 +10,20 @@
 // Components
 
 @import './components/modal-window.scss';
-
+@import './components/header-home.scss';
 @import './components/header-library.scss';
 
 @import './components/film_card_list.scss';
 @import './components/film_card.scss';
-@import './components/spinner.scss';
-@import './components/header-home.scss';
-@import './components/modal-team.scss';
-@import './components/footer.scss';
+@import './components/library-body.scss';
 @import './components/pagination.scss';
-@import './components/library-body';
+@import './components/spinner.scss';
+
+@import './components/modal-team.scss';
+
+@import './components/footer.scss';
+
+
 
 
 

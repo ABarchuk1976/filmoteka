@@ -160,6 +160,7 @@
   background-color: transparent;
   outline: none;
   border: none;
+  transform: scale(1);
 
   transition: scale var(--transition-time) var(--cubic);
 
@@ -242,7 +243,9 @@
 .btn-bottom {
   position: fixed;
   right: 10px;
-  bottom: 10px;
+  bottom: 23px;
+  display: flex;
+  align-items: center;
   justify-content: center;
   cursor: pointer;
   width: 30px;
@@ -259,7 +262,7 @@
   &:hover,
   &:focus {
     transform: rotate(-45deg);
-    opacity: 0.5;
+    opacity: 0.7;
   }
 }
 
@@ -270,7 +273,7 @@
   &:hover,
   &:focus {
     transform: rotate(45deg);
-    opacity: 0.5;
+    opacity: 0.7;
   }
 }
 
@@ -279,4 +282,13 @@
 }
 .btn-bottom_hide {
   display: none;
+}
+
+.btn-round {
+  right: 15px;
+  bottom: 28px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--secondary-text-color);
 }

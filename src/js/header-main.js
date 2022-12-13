@@ -1,7 +1,12 @@
 import axios from 'axios';
 import spinnerToggle from './spinner.js';
 
-import { renderPagination, getAPIData, renderFilmCards } from './common.js';
+import {
+  renderPagination,
+  getAPIData,
+  renderFilmCards,
+  goUp,
+} from './common.js';
 
 // імпорт файлу сховища та запис в змінну ключа
 import * as storageLocal from './local-storage.js';
@@ -20,6 +25,7 @@ let currentPage = 1;
 let nowAt = 1;
 
 window.addEventListener('load', () => {
+  spinnerToggle();
   galleryRef.innerHTML = '';
 
   currentPage = 1;
@@ -40,9 +46,11 @@ window.addEventListener('load', () => {
         warningRef.innerHTML = '';
       }, 4000);
     });
+  spinnerToggle();
 });
 
 function emptyQueryOrNoResults() {
+  spinnerToggle();
   warningRef.insertAdjacentHTML(
     'beforeend',
     `<div class="header__warning-message">Search result not successful. Enter the correct movie name.</div>`
@@ -72,11 +80,13 @@ function emptyQueryOrNoResults() {
         warningRef.innerHTML = '';
       }, 4000);
     });
+  spinnerToggle();
 }
 
 pagRef.addEventListener('click', onClickPagination);
 
 function onClickPagination(evt) {
+  spinnerToggle();
   const target = evt.target;
 
   if (target.textContent === '...' || target.tagName !== 'LI') return;
@@ -103,13 +113,15 @@ function onClickPagination(evt) {
         warningRef.innerHTML = '';
       }, 4000);
     });
+  spinnerToggle();
+  goUp();
 }
 
 formRef.addEventListener('submit', evt => {
   nowAt = 0;
   currentPage = 1;
 
-  // spinnerToggle();
+  spinnerToggle();
   evt.preventDefault();
   currentQuery = evt.currentTarget.elements.searchQuery.value
     .trim()
@@ -139,6 +151,7 @@ formRef.addEventListener('submit', evt => {
         warningRef.innerHTML = '';
       }, 4000);
     });
+  spinnerToggle();
 });
 
 inputRef.addEventListener('input', evt => {
@@ -154,7 +167,7 @@ inputRef.addEventListener('input', evt => {
 
   inputBtnClearRef.addEventListener('click', onClearInput);
 
-  function onClearInput(evt) {
+  function onClearInput() {
     query.value = '';
     inputBtnClearRef.classList.add('hidden');
     inputBtnClearRef.removeEventListener('click', onClearInput);
