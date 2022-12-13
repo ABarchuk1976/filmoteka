@@ -1,12 +1,7 @@
 import axios from 'axios';
 import spinnerToggle from './spinner.js';
 
-import {
-  renderPagination,
-  genresList,
-  getAPIData,
-  renderFilmCards,
-} from './common.js';
+import { renderPagination, getAPIData, renderFilmCards } from './common.js';
 
 import {
   KEY,
@@ -34,7 +29,7 @@ const formRef = document.querySelector('.header__form');
 let currentQuery = '';
 let currentPage = 1;
 // 1 - popular, 0 - search
-let nowAt = 1; 
+let nowAt = 1;
 
 window.addEventListener('load', () => {
   galleryRef.innerHTML = '';
@@ -162,19 +157,18 @@ inputRef.addEventListener('input', evt => {
   const query = evt.target;
   const inputBtnClearRef = document.querySelector('.header__btn-clear');
 
-	if (query.value.length) {
-		inputBtnClearRef.classList.remove('hidden');	
-	}
-	else {
-		inputBtnClearRef.classList.add('hidden');	
-		inputBtnClearRef.removeEventListener('click', onClearInput);
-	};
+  if (query.value.length) {
+    inputBtnClearRef.classList.remove('hidden');
+  } else {
+    inputBtnClearRef.classList.add('hidden');
+    inputBtnClearRef.removeEventListener('click', onClearInput);
+  }
 
-	inputBtnClearRef.addEventListener('click', onClearInput);
-	
-	function onClearInput(evt) {
+  inputBtnClearRef.addEventListener('click', onClearInput);
+
+  function onClearInput(evt) {
     query.value = '';
-		inputBtnClearRef.classList.add('hidden');	
-		inputBtnClearRef.removeEventListener('click', onClearInput);
+    inputBtnClearRef.classList.add('hidden');
+    inputBtnClearRef.removeEventListener('click', onClearInput);
   }
 });

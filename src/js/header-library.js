@@ -1,18 +1,22 @@
-import { getGenre } from './modal-film.js';
-import { KEY, IMG_PATH, SMALL_SIZE, NO_IMAGE } from './constants.js';
+import { renderPagination, renderFilmCards } from './common.js';
 
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
 const PER_PAGE = 6;
 // 1 - queue, 0 - watched
 let nowAt = 1;
+let allData = [];
 
-const buttonsRef = document.querySelector('.filter__list');
 const queueRef = document.querySelector('.filter__item-queue');
 const watchedRef = document.querySelector('.filter__item-watched');
 const pagLibraryRef = document.querySelector('.js-pagination-library');
 const emptyRef = document.querySelector('.empty-list');
+const emptyTitleRef = document.querySelector('.empty-title');
 const galleryLibrary = document.querySelector('.js-gallery-library');
+
+window.addEventListener('load', () => {
+  queueRef.click();
+});
 
 queueRef.addEventListener('click', onBtnClick);
 watchedRef.addEventListener('click', onBtnClick);
@@ -33,56 +37,32 @@ function onBtnClick(evt) {
   }
 
   try {
-    const allData = paginateAllStorage(key);
+    allData.length = 0;
+    allData = [...paginateAllData(key)];
 
-    if (!allData) throw 'No data to render';
+    console.log(allData[0]);
 
-    // renderStorageFilmCards(1, allData);
+    if (!allData || !allData.length) {
+      throw 'Your film list is empty';
+    }
+
+    renderFilmCards(allData[0], galleryLibrary);
+    renderPagination(1, allData.length, pagLibraryRef);
 
     emptyRef.classList.add('is-hidden');
   } catch (error) {
-    emptyRef.classList.remove('is-h');
-    console.log(error);
+    emptyRef.classList.remove('is-hidden');
+    emptyTitleRef.textContent = error.message;
   }
 }
 
-export function renderStorageFilmCards(page, data) {
-  const markup = data[page - 1]
-    .map(({ id, poster_path, genre_ids, title, release_date }) => {
-      let genresStr = getGenre(genre_ids);
-      let year = release_date.substring(0, 4);
-      if (genresStr && year) genresStr += ' | ';
-      if (!title) title = 'no information';
-
-      let smallImg = !!poster_path
-        ? IMG_PATH + SMALL_SIZE + poster_path
-        : NO_IMAGE;
-      return `
-      <li class="film-card">
-         	<a href="#" class="film-card__link">
-            <img
-              class="film-card__film-img"
-              src="${smallImg}"
-              alt="${title}"
-              id="${id}"
-            />
-            <h3 class="film-card__film-name">${title}</h3>
-            <p class="film-card__genre">${genresStr}${year}</p>
-          </a>
-        </li>
-		`;
-    })
-    .join('');
-
-  galleryLibrary.innerHTML = markup;
-}
-
-export function paginateAllStorage(key) {
+function paginateAllData(key) {
   try {
-    const filmStorage = localStorage.getItem(key);
+    let filmStorage = localStorage.getItem(key);
+
     if (filmStorage) {
       filmStorage = JSON.parse(filmStorage);
-      console.log('At paginateAllStorage', filmStorage);
+
       const allStorageDataByPages = [];
       for (let i = 0; i < filmStorage.length; i += PER_PAGE) {
         let end =
@@ -92,6 +72,6 @@ export function paginateAllStorage(key) {
       return allStorageDataByPages;
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 }
