@@ -1,11 +1,11 @@
 import * as storageLocal from './local-storage.js';
 import ModalFilm from './modal-film.js';
-import { sendWatchedToStorage, sendQueueToStorage} from "./local-storage-set";
+import { sendWatchedToStorage, sendQueueToStorage } from './local-storage-set';
 const refs = {
-  gallery: document.querySelector('.js-gallery'),
+  gallery: document.querySelector('.js-gallery-library'),
   closeBtn: document.querySelector('[data-modal-close]'),
-  btnWatched: document.querySelector(".btn_watched"),
-  btnQueue: document.querySelector(".btn_queue"),
+  btnWatched: document.querySelector('.btn_watched'),
+  btnQueue: document.querySelector('.btn_queue'),
   activLibraryBtn: document.querySelector(
     '.filter__item>.filter__button--active'
   ),
@@ -28,88 +28,90 @@ function onOpenModal(e) {
   modalFilm.modifyDataFilm(dataCurentFilm);
   modalFilm.open();
 
-///// for local-storage and button /////////
-refs.btnWatched.addEventListener("click", onWatchedBtnClick)
-refs.btnQueue.addEventListener("click", onQueueBtnClick)
+  ///// for local-storage and button /////////
+  refs.btnWatched.addEventListener('click', onWatchedBtnClick);
+  refs.btnQueue.addEventListener('click', onQueueBtnClick);
 
-localStorage.setItem("CurrentFilm", JSON.stringify(dataCurentFilm))
+  localStorage.setItem('CurrentFilm', JSON.stringify(dataCurentFilm));
 
-checkWatchedStorage(dataCurentFilm)
-if (refs.btnWatched.classList.contains("watched_remove")) {
-  refs.btnWatched.textContent = 'REMOVE FROM WATCHED'} 
-else if(refs.btnWatched.classList.contains("watched_send")){
-  refs.btnWatched.textContent = 'ADD TO WATCHED'
-}
-
-checkQueueStorage(dataCurentFilm)
-if (refs.btnQueue.classList.contains("queue_remove")) {
-    refs.btnQueue.textContent = 'REMOVE FROM QUEUE'}
-else if (refs.btnWatched.classList.contains("queue_send")){
-  refs.btnQueue.textContent = 'ADD TO QUEUE'
-}
-  
-function onWatchedBtnClick() {
-  if (refs.btnWatched.classList.contains("watched_send")) {
-    refs.btnWatched.textContent = 'REMOVE FROM WATCHED'
-    refs.btnWatched.classList.replace("watched_send", "watched_remove")
-
-    sendWatchedToStorage()
-
-  } else if (refs.btnWatched.classList.contains("watched_remove")) {
-    refs.btnWatched.textContent = 'ADD TO WATCHED'  
-    refs.btnWatched.classList.replace("watched_remove", "watched_send")
-
-    removeWatchedFilm(dataCurentFilm)
+  checkWatchedStorage(dataCurentFilm);
+  if (refs.btnWatched.classList.contains('watched_remove')) {
+    refs.btnWatched.textContent = 'REMOVE FROM WATCHED';
+  } else if (refs.btnWatched.classList.contains('watched_send')) {
+    refs.btnWatched.textContent = 'ADD TO WATCHED';
   }
-    
-  refs.btnWatched.textContent = 'ADD TO WATCHED' 
-  refs.btnWatched.classList.replace("watched_remove", "watched_send")  
-}
 
-function removeWatchedFilm(currentFilm) {
+  checkQueueStorage(dataCurentFilm);
+  if (refs.btnQueue.classList.contains('queue_remove')) {
+    refs.btnQueue.textContent = 'REMOVE FROM QUEUE';
+  } else if (refs.btnWatched.classList.contains('queue_send')) {
+    refs.btnQueue.textContent = 'ADD TO QUEUE';
+  }
+
+  function onWatchedBtnClick() {
+    if (refs.btnWatched.classList.contains('watched_send')) {
+      refs.btnWatched.textContent = 'REMOVE FROM WATCHED';
+      refs.btnWatched.classList.replace('watched_send', 'watched_remove');
+
+      sendWatchedToStorage();
+    } else if (refs.btnWatched.classList.contains('watched_remove')) {
+      refs.btnWatched.textContent = 'ADD TO WATCHED';
+      refs.btnWatched.classList.replace('watched_remove', 'watched_send');
+
+      removeWatchedFilm(dataCurentFilm);
+    }
+
+    refs.btnWatched.textContent = 'ADD TO WATCHED';
+    refs.btnWatched.classList.replace('watched_remove', 'watched_send');
+  }
+
+  function removeWatchedFilm(currentFilm) {
     try {
-      const getWatchedFromStorage = localStorage.getItem("WatchedMovies")
-      const getWatchedArray = JSON.parse(getWatchedFromStorage)
+      const getWatchedFromStorage = localStorage.getItem('WatchedMovies');
+      const getWatchedArray = JSON.parse(getWatchedFromStorage);
 
-      const watchedFilmIndex = getWatchedArray.findIndex(value => value.id === currentFilm.id);
-      getWatchedArray.splice(watchedFilmIndex, 1)
-      localStorage.setItem("WatchedMovies", JSON.stringify(getWatchedArray))
+      const watchedFilmIndex = getWatchedArray.findIndex(
+        value => value.id === currentFilm.id
+      );
+      getWatchedArray.splice(watchedFilmIndex, 1);
+      localStorage.setItem('WatchedMovies', JSON.stringify(getWatchedArray));
     } catch (error) {
-    // console.error('Get state error: ', error.message);
-  }
-}
-
-function onQueueBtnClick() {
-  if (refs.btnQueue.classList.contains("queue_send")) {
-    refs.btnQueue.textContent = 'REMOVE FROM QUEUE'
-    refs.btnQueue.classList.replace("queue_send", "queue_remove")
-
-    sendQueueToStorage()
-  } else if (refs.btnQueue.classList.contains("queue_remove")) {
-    refs.btnQueue.textContent = 'ADD TO QUEUE'  
-    refs.btnQueue.classList.replace("queue_remove", "queue_send")
-
-    removeQueueFilm(dataCurentFilm)
+      // console.error('Get state error: ', error.message);
+    }
   }
 
-  refs.btnQueue.textContent = 'ADD TO QUEUE'  
-  refs.btnQueue.classList.replace("queue_remove", "queue_send")
-}
+  function onQueueBtnClick() {
+    if (refs.btnQueue.classList.contains('queue_send')) {
+      refs.btnQueue.textContent = 'REMOVE FROM QUEUE';
+      refs.btnQueue.classList.replace('queue_send', 'queue_remove');
 
-function removeQueueFilm(currentFilm) {
+      sendQueueToStorage();
+    } else if (refs.btnQueue.classList.contains('queue_remove')) {
+      refs.btnQueue.textContent = 'ADD TO QUEUE';
+      refs.btnQueue.classList.replace('queue_remove', 'queue_send');
+
+      removeQueueFilm(dataCurentFilm);
+    }
+
+    refs.btnQueue.textContent = 'ADD TO QUEUE';
+    refs.btnQueue.classList.replace('queue_remove', 'queue_send');
+  }
+
+  function removeQueueFilm(currentFilm) {
     try {
-      const getQueueFromStorage = localStorage.getItem("QueueMovies")
-      const getQueueArray = JSON.parse(getQueueFromStorage)
+      const getQueueFromStorage = localStorage.getItem('QueueMovies');
+      const getQueueArray = JSON.parse(getQueueFromStorage);
 
-      const queueFilmIndex = getQueueArray.findIndex(value => value.id === currentFilm.id);
-      getQueueArray.splice(queueFilmIndex, 1)
-      localStorage.setItem("QueueMovies", JSON.stringify(getQueueArray))
-
-  } catch (error) {
-    // console.error('Get state error: ', error.message);
+      const queueFilmIndex = getQueueArray.findIndex(
+        value => value.id === currentFilm.id
+      );
+      getQueueArray.splice(queueFilmIndex, 1);
+      localStorage.setItem('QueueMovies', JSON.stringify(getQueueArray));
+    } catch (error) {
+      // console.error('Get state error: ', error.message);
+    }
   }
-}
-///////////////////end of local-storage ///////////
+  ///////////////////end of local-storage ///////////
 
   refs.closeBtn.addEventListener('click', onCloseModal);
   window.addEventListener('keydown', onCloseModalEsc);
@@ -121,7 +123,7 @@ function onCloseModal() {
   refs.closeBtn.removeEventListener('click', onCloseModal);
   window.removeEventListener('keydown', onCloseModalEsc);
 
-    window.location.reload()
+  window.location.reload();
 }
 
 function onCloseModalEsc(e) {
@@ -134,7 +136,9 @@ function onCloseModalEsc(e) {
 }
 
 function getFilmData(filmId) {
-  const filmList = storageLocal.load('QueueMovies').concat(storageLocal.load('WatchedMovies'));
+  const filmList = storageLocal
+    .load('QueueMovies')
+    .concat(storageLocal.load('WatchedMovies'));
   return filmList.find(film => film.id === Number(filmId));
 }
 
@@ -149,38 +153,40 @@ function onOverlayClose(e) {
 
 function checkWatchedStorage(currentFilm) {
   try {
-    const getWatchedFromStorage = localStorage.getItem("WatchedMovies")
-    const getWatchedArray = JSON.parse(getWatchedFromStorage)
-    const checkWatchedStorage = getWatchedArray.find(option => option.id === currentFilm.id);
-        if (checkWatchedStorage) {
-          refs.btnWatched.classList.replace("watched_send", "watched_remove")
-          refs.btnWatched.textContent = 'REMOVE FROM WATCHED'
-        } else {
-          refs.btnWatched.classList.replace("watched_remove", "watched_send")
-          refs.btnWatched.textContent = 'ADD TO WATCHED'
-        }
-    } catch (error) {
-      // console.error('Get state error: ', error.message);
-      refs.btnWatched.classList.replace("watched_remove", "watched_send")
+    const getWatchedFromStorage = localStorage.getItem('WatchedMovies');
+    const getWatchedArray = JSON.parse(getWatchedFromStorage);
+    const checkWatchedStorage = getWatchedArray.find(
+      option => option.id === currentFilm.id
+    );
+    if (checkWatchedStorage) {
+      refs.btnWatched.classList.replace('watched_send', 'watched_remove');
+      refs.btnWatched.textContent = 'REMOVE FROM WATCHED';
+    } else {
+      refs.btnWatched.classList.replace('watched_remove', 'watched_send');
+      refs.btnWatched.textContent = 'ADD TO WATCHED';
     }
+  } catch (error) {
+    // console.error('Get state error: ', error.message);
+    refs.btnWatched.classList.replace('watched_remove', 'watched_send');
+  }
 }
 
 function checkQueueStorage(currentFilm) {
   try {
-    const getQueueFromStorage = localStorage.getItem("QueueMovies")
-    const getQueueArray = JSON.parse(getQueueFromStorage)
-    const checkQueueStorage = getQueueArray.find(option => option.id === currentFilm.id);
-        if (checkQueueStorage) {
-          refs.btnQueue.classList.replace("queue_send", "queue_remove")
-          refs.btnQueue.textContent = 'REMOVE FROM QUEUE'
-        } else {
-          refs.btnQueue.classList.replace("queue_remove", "queue_send")
-          refs.btnQueue.textContent = 'ADD TO QUEUE'
-   
-
-        }
-    } catch (error) {
-      // console.error('Get state error: ', error.message);
-      refs.btnQueue.classList.replace("queue_remove", "queue_send")
+    const getQueueFromStorage = localStorage.getItem('QueueMovies');
+    const getQueueArray = JSON.parse(getQueueFromStorage);
+    const checkQueueStorage = getQueueArray.find(
+      option => option.id === currentFilm.id
+    );
+    if (checkQueueStorage) {
+      refs.btnQueue.classList.replace('queue_send', 'queue_remove');
+      refs.btnQueue.textContent = 'REMOVE FROM QUEUE';
+    } else {
+      refs.btnQueue.classList.replace('queue_remove', 'queue_send');
+      refs.btnQueue.textContent = 'ADD TO QUEUE';
     }
+  } catch (error) {
+    // console.error('Get state error: ', error.message);
+    refs.btnQueue.classList.replace('queue_remove', 'queue_send');
+  }
 }

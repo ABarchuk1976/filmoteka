@@ -1,10 +1,5 @@
 import { getGenre } from './modal-film.js';
-import {
-  KEY,
-  IMG_PATH,
-  SMALL_SIZE,
-  NO_IMAGE,
-} from './constants.js';
+import { KEY, IMG_PATH, SMALL_SIZE, NO_IMAGE } from './constants.js';
 
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
@@ -23,31 +18,30 @@ queueRef.addEventListener('click', onBtnClick);
 watchedRef.addEventListener('click', onBtnClick);
 
 function onBtnClick(evt) {
-	const target = evt.target;
-	if (target.tagName !== 'LI') return;
+  const target = evt.target;
 
-	nowAt = target.classList.contains('filter__item-queue') ? 1 : 0;
-  
+  nowAt = target.classList.contains('filter__item-queue') ? 1 : 0;
+
   let key = nowAt ? KEY_QUEUE : KEY_WATCHED;
 
-	if (nowAt) {
-		queueRef.classList.add('active');
-		watchedRef.classList.remove('active');
-	} 
-	else {
-		watchedRef.classList.add('active');
-		queueRef.classList.remove('active');
-	};
+  if (nowAt) {
+    queueRef.classList.add('active');
+    watchedRef.classList.remove('active');
+  } else {
+    watchedRef.classList.add('active');
+    queueRef.classList.remove('active');
+  }
 
   try {
     const allData = paginateAllStorage(key);
 
-		console.log(allData);
+    if (!allData) throw 'No data to render';
 
     // renderStorageFilmCards(1, allData);
 
     emptyRef.classList.add('is-hidden');
   } catch (error) {
+    emptyRef.classList.remove('is-h');
     console.log(error);
   }
 }

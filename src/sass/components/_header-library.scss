@@ -53,6 +53,17 @@
   justify-content: space-between;
 }
 
+.menu__link.current:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -7%;
+  width: 69px;
+  height: 3px;
+  border-radius: 2px;
+  background-color: #ff6b08;
+}
+
 .filter__list {
   display: flex;
   align-items: center;
@@ -97,29 +108,6 @@
     background-color: var(--accent-text-color);
     border-color: var(--accent-text-color);
   }
-}
-
-.filter__button.active,
-.filter__button:hover,
-.filter__button:focus {
-  border: 1px solid var(--accent-elem-color);
-  background: var(--accent-elem-color);
-  box-shadow: 0 8px 43px rgb(255 107 1 / 60%);
-  transition-property: background-color;
-  transition-duration: 0.25s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.menu__link.current:after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -7%;
-  width: 69px;
-  height: 3px;
-  border-radius: 2px;
-  background-color: #ff6b08;
 }
 
 // ______btn_scroll________

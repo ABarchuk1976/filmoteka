@@ -28,9 +28,9 @@ export const trailerButtonRef = document.getElementById('trailer');
 const trailerErrorContainer = document.getElementById('trailer-error');
 const spinner = document.querySelector('.spinner');
 
-if (!trailerButtonRef) {
-  return;
-}
+// if (!trailerButtonRef) {
+//   return;
+// }
 
 export const handleBackButtonClick = (iframeContainer, trailerContainer) => {
   trailerContainer.classList.remove('display-none');
