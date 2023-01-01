@@ -1,21 +1,11 @@
 import * as storageLocal from './local-storage.js';
-const FILM_CURRENT_PAGE = 'film-current-page';
-import axios from 'axios';
-import {
-  API,
-  KEY,
-  TRENDING,
-  MEDIA_TYPE,
-  TIME_WINDOW,
-  IMG_PATH,
-  SMALL_SIZE,
-  NO_IMAGE,
-} from './constants.js';
+
 import { getGenre } from './modal-film';
 import { btnUp, btnDown } from './btn-scroll.js';
 
 const LEFT_ARROW = '&#8592;';
 const RIGHT_ARROW = '&#8594;';
+import { IMG_PATH, SMALL_SIZE, NO_IMAGE } from './constants.js';
 
 const searchQuery = document.querySelector('.header__input');
 
@@ -32,8 +22,10 @@ export function renderPagination(page, pages, ref) {
   let twoNextPage = page + 2;
   let markup = '';
 
-  if (!page || page > pages) return;
-
+  if (!page || page > pages) {
+    ref.innerHTML = '';
+    return;
+  }
   if (page > 1)
     markup += `<li class="js-pagination__arrow-left">${LEFT_ARROW}</li>`;
 
@@ -66,41 +58,8 @@ export function renderPagination(page, pages, ref) {
   ref.innerHTML = markup;
 }
 
-//process = 1 - do popular, 0 - do search
-export async function getAPIData(page, process) {
-  try {
-    let searchPath = '';
-    if (process) {
-      searchPath = `${API}${TRENDING}/${MEDIA_TYPE}/${TIME_WINDOW}?`;
-      searchPath += new URLSearchParams({
-        api_key: KEY,
-        page: page,
-        include_adult: false,
-      });
-    } else {
-      searchPath = `${API}/search/${MEDIA_TYPE}?`;
-      searchPath += new URLSearchParams({
-        api_key: KEY,
-        language: 'en-US',
-        query: searchQuery.value.trim().toLowerCase(),
-        page: page,
-        include_adult: false,
-      });
-    }
-
-    const response = await axios.get(searchPath);
-
-    if (response.status !== 200) {
-      throw new Error(response.status);
-    }
-    return response.data;
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
 // ref = where need to render
-export function renderFilmCards(data, ref) {
+export function renderFilmCards(data, ref, needStore = false) {
   ref.innerHTML = '';
   let markup = data
     .map(({ id, poster_path, genre_ids, title, release_date }) => {
@@ -133,6 +92,6 @@ export function renderFilmCards(data, ref) {
   ref.innerHTML = markup;
 
   //
-  storageLocal.save(FILM_CURRENT_PAGE, [...data]);
+  if (needStore) storageLocal.save(storageLocal.FILM_CURRENT_PAGE, [...data]);
   //
 }

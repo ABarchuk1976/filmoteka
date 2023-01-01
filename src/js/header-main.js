@@ -1,16 +1,8 @@
+import axios from 'axios';
+
+import { API, KEY, TRENDING, MEDIA_TYPE, TIME_WINDOW } from './constants.js';
 import spinnerToggle from './spinner.js';
-
-import {
-  renderPagination,
-  getAPIData,
-  renderFilmCards,
-  goUp,
-} from './common.js';
-
-//
-import * as storageLocal from './local-storage.js';
-const FILM_CURRENT_PAGE = 'film-current-page';
-//
+import { renderPagination, renderFilmCards, goUp } from './common.js';
 
 const galleryRef = document.querySelector('.js-gallery');
 const pagRef = document.querySelector('.js-pagination');
@@ -23,7 +15,7 @@ let currentPage = 1;
 // 1 - do popular, 0 - do search
 let currentProcess = 1;
 
-function showMessage(message) {
+export function showMessage(message) {
   warningRef.insertAdjacentHTML(
     'beforeend',
     `<div class="header__warning-message">${message}</div>`
@@ -34,48 +26,62 @@ function showMessage(message) {
   }, 4000);
 }
 
+async function getAPIData(page, process) {
+  try {
+    let searchPath = '';
+    if (process) {
+      searchPath = `${API}${TRENDING}/${MEDIA_TYPE}/${TIME_WINDOW}?`;
+      searchPath += new URLSearchParams({
+        api_key: KEY,
+        page,
+        include_adult: false,
+      });
+    } else {
+      searchPath = `${API}/search/${MEDIA_TYPE}?`;
+      searchPath += new URLSearchParams({
+        api_key: KEY,
+        language: 'en-US',
+        query: inputRef.value.trim().toLowerCase(),
+        page,
+        include_adult: false,
+      });
+    }
+
+    const response = await axios.get(searchPath);
+
+    if (response.status !== 200) {
+      throw new Error('Service is temporarily unavailable.');
+    }
+
+    return response.data;
+  } catch (error) {
+    showMessage(error.message);
+  }
+}
+
 function processingAPIData(pageAPI, process) {
   spinnerToggle();
   setTimeout(
     () =>
       getAPIData(pageAPI, process)
         .then(({ page, results, total_pages: pages }) => {
+          console.log('Data: ', page, results, pages);
           renderFilmCards(results, galleryRef);
           renderPagination(page, pages, pagRef);
+          if (!pages)
+            throw new Error(
+              `Search result "${currentQuery}" not successful. Enter an another movie name.`
+            );
         })
-        .catch(error => {
-          const message = 'Service is temporarily unavailable.';
-
-          showMessage(message);
-        })
+        .catch(error => showMessage(error.message))
         .finally(spinnerToggle()),
     200
   );
 }
 
 window.addEventListener('load', () => {
-  galleryRef.innerHTML = '';
-
-  currentPage = 1;
-  currentProcess = 1;
-
   processingAPIData(currentPage, currentProcess);
 });
-
-function emptyQueryOrNoResults() {
-  const message = currentQuery
-    ? `Search result "${currentQuery}" not successful. Enter an another movie name.`
-    : `Search query is empty. Rendering the popular movies.`;
-
-  showMessage(message);
-
-  galleryRef.innerHTML = '';
-
-  currentProcess = 1;
-  currentPage = 1;
-
-  processingAPIData(currentPage, currentProcess);
-}
 
 pagRef.addEventListener('click', onClickPagination);
 
@@ -106,8 +112,11 @@ formRef.addEventListener('submit', evt => {
     .toLowerCase();
 
   if (!currentQuery) {
-    emptyQueryOrNoResults();
-    return;
+    const message = 'Search query is empty. Rendering the popular movies.';
+
+    showMessage(message);
+    galleryRef.innerHTML = '';
+    currentProcess = 1;
   }
 
   processingAPIData(currentPage, currentProcess);

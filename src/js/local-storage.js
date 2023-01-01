@@ -1,9 +1,6 @@
+const FILM_CURRENT_PAGE = 'film-current-page';
+
 const save = (key, value) => {
-  // console.log(key)
-  // console.log(value)
-
-
-
   try {
     const serializedState = JSON.stringify(value);
     localStorage.setItem(key, serializedState);
@@ -29,4 +26,4 @@ const remove = key => {
   }
 };
 
-export { save, load, remove };
+export { save, load, remove, FILM_CURRENT_PAGE };

@@ -3,6 +3,7 @@ import { renderPagination, renderFilmCards, goUp } from './common.js';
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
 const PER_PAGE = 6;
+const NEED_STORE = true;
 
 let allData = [];
 let currentPage = 1;
@@ -18,7 +19,6 @@ const galleryLibrary = document.querySelector('.js-gallery-library');
 
 window.addEventListener('load', () => {
   queueRef.click();
-  currentPage = 1;
 });
 
 queueRef.addEventListener('click', onBtnClick);
@@ -32,6 +32,8 @@ function onBtnClick(evt) {
 
   let key = currentProcess ? KEY_QUEUE : KEY_WATCHED;
 
+  console.log(evt);
+
   if (currentProcess) {
     queueRef.classList.add('active');
     watchedRef.classList.remove('active');
@@ -39,22 +41,22 @@ function onBtnClick(evt) {
     watchedRef.classList.add('active');
     queueRef.classList.remove('active');
   }
+  emptyRef.classList.add('is-hidden');
 
   try {
-    allData.length = 0;
     allData = [...paginateAllData(key)];
 
     if (!allData || !allData.length) {
-      throw 'Your film list is empty';
+      emptyRef.classList.remove('is-hidden');
+      emptyTitleRef.textContent = 'Your film list is empty.';
+      return;
     }
 
-    renderFilmCards(allData[currentPage - 1], galleryLibrary);
+    renderFilmCards(allData[currentPage - 1], galleryLibrary, NEED_STORE);
     renderPagination(currentPage, allData.length, pagLibraryRef);
-
-    emptyRef.classList.add('is-hidden');
   } catch (error) {
     emptyRef.classList.remove('is-hidden');
-    emptyTitleRef.textContent = 'Your film list is empty';
+    emptyTitleRef.textContent = 'Something went wrong.';
   }
 }
 

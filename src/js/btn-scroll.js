@@ -18,7 +18,7 @@ export const btnUp = {
         behavior: 'smooth',
       });
       this.hide();
-      btnBottom.show();
+      btnDown.show();
     };
   },
 };
