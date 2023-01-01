@@ -1,4 +1,3 @@
-import spinnerToggle from './spinner.js';
 import * as storageLocal from './local-storage.js';
 const FILM_CURRENT_PAGE = 'film-current-page';
 import axios from 'axios';
@@ -67,10 +66,11 @@ export function renderPagination(page, pages, ref) {
   ref.innerHTML = markup;
 }
 
-export async function getAPIData(page, now) {
+//process = 1 - do popular, 0 - do search
+export async function getAPIData(page, process) {
   try {
     let searchPath = '';
-    if (now) {
+    if (process) {
       searchPath = `${API}${TRENDING}/${MEDIA_TYPE}/${TIME_WINDOW}?`;
       searchPath += new URLSearchParams({
         api_key: KEY,
@@ -99,6 +99,7 @@ export async function getAPIData(page, now) {
   }
 }
 
+// ref = where need to render
 export function renderFilmCards(data, ref) {
   ref.innerHTML = '';
   let markup = data
@@ -131,7 +132,7 @@ export function renderFilmCards(data, ref) {
 
   ref.innerHTML = markup;
 
-  // запис в локальне сховище
+  //
   storageLocal.save(FILM_CURRENT_PAGE, [...data]);
   //
 }

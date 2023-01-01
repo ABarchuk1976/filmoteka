@@ -1,4 +1,3 @@
-import axios from 'axios';
 import spinnerToggle from './spinner.js';
 
 import {
@@ -8,7 +7,7 @@ import {
   goUp,
 } from './common.js';
 
-// імпорт файлу сховища та запис в змінну ключа
+//
 import * as storageLocal from './local-storage.js';
 const FILM_CURRENT_PAGE = 'film-current-page';
 //
@@ -21,72 +20,66 @@ const formRef = document.querySelector('.header__form');
 
 let currentQuery = '';
 let currentPage = 1;
-// 1 - popular, 0 - search
-let nowAt = 1;
+// 1 - do popular, 0 - do search
+let currentProcess = 1;
 
-window.addEventListener('load', () => {
-  spinnerToggle();
-  galleryRef.innerHTML = '';
-
-  currentPage = 1;
-  nowAt = 1;
-
-  getAPIData(currentPage, nowAt)
-    .then(({ page, results, total_pages: pages }) => {
-      renderFilmCards(results, galleryRef);
-      renderPagination(page, pages, pagRef);
-    })
-    .catch(error => {
-      warningRef.insertAdjacentHTML(
-        'beforeend',
-        `<div class="header__warning-message">Service is temporarily unavailable.</div>`
-      );
-
-      setTimeout(() => {
-        warningRef.innerHTML = '';
-      }, 4000);
-    });
-  spinnerToggle();
-});
-
-function emptyQueryOrNoResults() {
-  spinnerToggle();
+function showMessage(message) {
   warningRef.insertAdjacentHTML(
     'beforeend',
-    `<div class="header__warning-message">Search result not successful. Enter the correct movie name.</div>`
+    `<div class="header__warning-message">${message}</div>`
   );
 
   setTimeout(() => {
     warningRef.innerHTML = '';
   }, 4000);
+}
+
+function processingAPIData(pageAPI, process) {
+  spinnerToggle();
+  setTimeout(
+    () =>
+      getAPIData(pageAPI, process)
+        .then(({ page, results, total_pages: pages }) => {
+          renderFilmCards(results, galleryRef);
+          renderPagination(page, pages, pagRef);
+        })
+        .catch(error => {
+          const message = 'Service is temporarily unavailable.';
+
+          showMessage(message);
+        })
+        .finally(spinnerToggle()),
+    200
+  );
+}
+
+window.addEventListener('load', () => {
+  galleryRef.innerHTML = '';
+
+  currentPage = 1;
+  currentProcess = 1;
+
+  processingAPIData(currentPage, currentProcess);
+});
+
+function emptyQueryOrNoResults() {
+  const message = currentQuery
+    ? `Search result "${currentQuery}" not successful. Enter an another movie name.`
+    : `Search query is empty. Rendering the popular movies.`;
+
+  showMessage(message);
 
   galleryRef.innerHTML = '';
 
-  nowAt = 1;
+  currentProcess = 1;
   currentPage = 1;
 
-  getAPIData(currentPage, nowAt)
-    .then(({ page, results, total_pages: pages }) => {
-      renderFilmCards(results, galleryRef);
-      renderPagination(page, pages, pagRef);
-    })
-    .catch(() => {
-      warningRef.insertAdjacentHTML(
-        'beforeend',
-        `<div class="header__warning-message">Service is temporarily unavailable.</div>`
-      );
-
-      setTimeout(() => {
-        warningRef.innerHTML = '';
-      }, 4000);
-    });
-  spinnerToggle();
+  processingAPIData(currentPage, currentProcess);
 }
 
 pagRef.addEventListener('click', onClickPagination);
 
 function onClickPagination(evt) {
-  spinnerToggle();
   const target = evt.target;
 
   if (target.textContent === '...' || target.tagName !== 'LI') return;
@@ -98,30 +91,15 @@ function onClickPagination(evt) {
   if (target.classList.contains('js-pagination__button'))
     currentPage = Number(target.textContent);
 
-  getAPIData(currentPage, nowAt)
-    .then(({ page, results, total_pages: pages }) => {
-      renderFilmCards(results, galleryRef);
-      renderPagination(page, pages, pagRef);
-    })
-    .catch(() => {
-      warningRef.insertAdjacentHTML(
-        'beforeend',
-        `<div class="header__warning-message">Service is temporarily unavailable.</div>`
-      );
+  processingAPIData(currentPage, currentProcess);
 
-      setTimeout(() => {
-        warningRef.innerHTML = '';
-      }, 4000);
-    });
-  spinnerToggle();
   goUp();
 }
 
 formRef.addEventListener('submit', evt => {
-  nowAt = 0;
+  currentProcess = 0;
   currentPage = 1;
 
-  spinnerToggle();
   evt.preventDefault();
   currentQuery = evt.currentTarget.elements.searchQuery.value
     .trim()
@@ -132,26 +110,7 @@ formRef.addEventListener('submit', evt => {
     return;
   }
 
-  getAPIData(currentPage, nowAt)
-    .then(({ page, results, total_pages: pages }) => {
-      if (!pages) {
-        emptyQueryOrNoResults();
-        return;
-      }
-      renderFilmCards(results, galleryRef);
-      renderPagination(page, pages, pagRef);
-    })
-    .catch(error => {
-      warningRef.insertAdjacentHTML(
-        'beforeend',
-        `<div class="header__warning-message">Service is temporarily unavailable.</div>`
-      );
-
-      setTimeout(() => {
-        warningRef.innerHTML = '';
-      }, 4000);
-    });
-  spinnerToggle();
+  processingAPIData(currentPage, currentProcess);
 });
 
 inputRef.addEventListener('input', evt => {

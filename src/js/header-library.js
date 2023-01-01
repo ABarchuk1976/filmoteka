@@ -3,10 +3,11 @@ import { renderPagination, renderFilmCards, goUp } from './common.js';
 const KEY_WATCHED = 'WatchedMovies';
 const KEY_QUEUE = 'QueueMovies';
 const PER_PAGE = 6;
-// 1 - queue, 0 - watched
-let nowAt = 1;
+
 let allData = [];
 let currentPage = 1;
+// 1 - do queue, 0 - do watched
+let currentProcess = 1;
 
 const queueRef = document.querySelector('.filter__item-queue');
 const watchedRef = document.querySelector('.filter__item-watched');
@@ -26,12 +27,12 @@ watchedRef.addEventListener('click', onBtnClick);
 function onBtnClick(evt) {
   const target = evt.target;
 
-  nowAt = target.classList.contains('filter__item-queue') ? 1 : 0;
+  currentProcess = target.classList.contains('filter__item-queue') ? 1 : 0;
   currentPage = 1;
 
-  let key = nowAt ? KEY_QUEUE : KEY_WATCHED;
+  let key = currentProcess ? KEY_QUEUE : KEY_WATCHED;
 
-  if (nowAt) {
+  if (currentProcess) {
     queueRef.classList.add('active');
     watchedRef.classList.remove('active');
   } else {
