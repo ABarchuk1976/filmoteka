@@ -23,11 +23,12 @@ window.addEventListener('load', () => {
 listRef.addEventListener('click', onBtnClick);
 
 function onBtnClick(evt) {
-  const target = evt.target;
+  const { name, tagName } = evt.target;
 
-  if (target.tagName !== 'LI') return;
+  console.log('on Li Click: ', evt.target.name);
+  if (tagName !== 'BUTTON') return;
 
-  const key = target.name;
+  const key = name;
 
   currentPage = 1;
 
