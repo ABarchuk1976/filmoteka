@@ -2,7 +2,12 @@
 <div class="backdrop is-hidden" data-modal>
   <div class="modal">
     <button type="button" class="modal__close-btn" data-modal-close>
-      <svg class="modal__close-icon" width="30" height="30" aria-label="Close">
+      <svg
+        class="modal__close-icon"
+        width="30"
+        height="30"
+        aria-label="Close button"
+      >
         <use href="./images/sprite.svg#close"></use>
       </svg>
     </button>
@@ -58,20 +63,32 @@
           with bags of gold hide out in the abandoned gold mine where they
           happen across another gang of three – who themselves were planning to
           hit the very same bank! As tensions rise, things go from bad to worse
-          as they realise the bags of gold are filled with lead... they’ve been
+          as they realize the bags of gold are filled with lead... they’ve been
           double crossed – but by who and how?
         </p>
         <div class="btn__wrapper">
-          <button class="btn--film btn_watched watched_send" type="button">add to Watched</button>
-          <button class="btn--film btn_queue queue_send" type="button">add to queue</button>
           <button
-          id="trailer"
-          data-movie-id="505642"
-          class="btn--trailer"
-          type="button"
-        >
-          <img src="../assets/youtube_btn.svg" alt="" />
-        </button>
+            name="watched"
+            class="btn--film btn_watched watched_send"
+            type="button"
+          >
+            add to watched
+          </button>
+          <button
+            name="queue"
+            class="btn--film btn_queue queue_send"
+            type="button"
+          >
+            add to queue
+          </button>
+          <button
+            id="trailer"
+            data-movie-id="505642"
+            class="btn--trailer"
+            type="button"
+          >
+            <img src="../assets/youtube_btn.svg" alt="" />
+          </button>
         </div>
         <div id="trailer-error" class="trailer-error"></div>
       </div>

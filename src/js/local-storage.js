@@ -1,6 +1,4 @@
-const FILM_CURRENT_PAGE = 'film-current-page';
-
-const save = (key, value) => {
+export const setStore = (key, value) => {
   try {
     const serializedState = JSON.stringify(value);
     localStorage.setItem(key, serializedState);
@@ -9,21 +7,19 @@ const save = (key, value) => {
   }
 };
 
-const load = key => {
+export const getStore = key => {
   try {
     const serializedState = localStorage.getItem(key);
-    return serializedState === null ? undefined : JSON.parse(serializedState);
+    return serializedState ? JSON.parse(serializedState) : undefined;
   } catch (error) {
     console.error('Get state error: ', error.message);
   }
 };
 
-const remove = key => {
+export const removeStore = key => {
   try {
     localStorage.removeItem(key);
   } catch (error) {
     console.error('Get state error: ', error.message);
   }
 };
-
-export { save, load, remove, FILM_CURRENT_PAGE };

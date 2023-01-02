@@ -1,189 +1,117 @@
-import * as storageLocal from './local-storage.js';
+import { getStore, setStore, removeStore } from './local-storage.js';
 import ModalFilm from './modal-film';
-import { handleBackButtonClick, trailerButtonRef,  handleTrailerButtonClick} from './trailer';
+import {
+  handleBackButtonClick,
+  trailerButtonRef,
+  handleTrailerButtonClick,
+} from './trailer';
+import { changeStore, getFilmData } from './common.js';
 
-import { sendWatchedToStorage, sendQueueToStorage} from "./local-storage-set";
-
-const refs = {
-  gallery: document.querySelector('.js-gallery'),
-  closeBtn: document.querySelector('[data-modal-close]'),
-  btnWatched: document.querySelector(".btn_watched"),
-  btnQueue: document.querySelector(".btn_queue"),
-};
+const gallery = document.querySelector('.js-gallery');
+const closeBtn = document.querySelector('[data-modal-close]');
+const btnWrapperRef = document.querySelector('.btn__wrapper');
+// const btnWatched = document.querySelector('.btn_watched');
+// const btnQueue = document.querySelector('.btn_queue');
 
 const modalFilm = new ModalFilm();
 
-refs.gallery.addEventListener('click', onOpenModal);
-refs.closeBtn.addEventListener('click', onCloseModal);
-window.addEventListener('keydown', onCloseModalEsc);  
+gallery.addEventListener('click', onOpenModal);
+closeBtn.addEventListener('click', onCloseModal);
+window.addEventListener('keydown', onCloseModalEsc);
 
 function onOverlayClose(event) {
-  if (!event.target.closest(".modal") && event.target.closest('.backdrop')) {
-      onCloseModal();
+  if (!event.target.closest('.modal') && event.target.closest('.backdrop')) {
+    onCloseModal();
   }
 }
-document.addEventListener("click", onOverlayClose)
+document.addEventListener('click', onOverlayClose);
 
-function onOpenModal(e) {
-  e.preventDefault();
+function onOpenModal(evt) {
+  const { id, nodeName, name } = evt.target;
+  evt.preventDefault();
   trailerButtonRef.addEventListener('click', handleTrailerButtonClick);
 
-  if (e.target.nodeName !== 'IMG') return;
+  if (nodeName !== 'IMG') return;
 
-  const dataCurentFilm = getFilmData(e.target.id);
+  const dataCurrentFilm = getFilmData(id);
 
-  modalFilm.modifyDataFilm(dataCurentFilm);
+  modalFilm.modifyDataFilm(dataCurrentFilm);
   modalFilm.open();
 
-///// for local-storage and button /////////
-  refs.btnWatched.addEventListener("click", onWatchedBtnClick)
-  refs.btnQueue.addEventListener("click", onQueueBtnClick)
+  btnWrapperRef.addEventListener('click', onBtnClick);
 
-  localStorage.setItem("CurrentFilm", JSON.stringify(dataCurentFilm))
-  
-  checkWatchedStorage(dataCurentFilm)
-  if (refs.btnWatched.classList.contains("watched_remove")) {
-    refs.btnWatched.textContent = 'REMOVE FROM WATCHED'} 
-  else if(refs.btnWatched.classList.contains("watched_send")){
-    refs.btnWatched.textContent = 'ADD TO WATCHED'
+  function onBtnClick(evt) {
+    const { nodeName, name: key } = evt.target;
+    if (nodeName !== 'BUTTON') return;
+    changeStore(key);
+    modalFilm.rerenderBtnWrapper();
   }
+  ///////////////////end of local-storage ///////////
 
-  checkQueueStorage(dataCurentFilm)
-  if (refs.btnQueue.classList.contains("queue_remove")) {
-      refs.btnQueue.textContent = 'REMOVE FROM QUEUE'}
-  else if (refs.btnWatched.classList.contains("queue_send")){
-    refs.btnQueue.textContent = 'ADD TO QUEUE'
-  }
-    
-  function onWatchedBtnClick() {
-    if (refs.btnWatched.classList.contains("watched_send")) {
-      refs.btnWatched.textContent = 'REMOVE FROM WATCHED'
-      refs.btnWatched.classList.replace("watched_send", "watched_remove")
-
-      sendWatchedToStorage()
-
-    } else if (refs.btnWatched.classList.contains("watched_remove")) {
-      refs.btnWatched.textContent = 'ADD TO WATCHED'  
-      refs.btnWatched.classList.replace("watched_remove", "watched_send")
-
-      removeWatchedFilm(dataCurentFilm)
-    }
-      
-    refs.btnWatched.textContent = 'ADD TO WATCHED' 
-    refs.btnWatched.classList.replace("watched_remove", "watched_send")  
-  }
- 
-  function removeWatchedFilm(currentFilm) {
-      try {
-        const getWatchedFromStorage = localStorage.getItem("WatchedMovies")
-        const getWatchedArray = JSON.parse(getWatchedFromStorage)
-
-        const watchedFilmIndex = getWatchedArray.findIndex(value => value.id === currentFilm.id);
-        getWatchedArray.splice(watchedFilmIndex, 1)
-        localStorage.setItem("WatchedMovies", JSON.stringify(getWatchedArray))
-      } catch (error) {
-      // console.error('Get state error: ', error.message);
-    }
-}
-  
-  function onQueueBtnClick() {
-    if (refs.btnQueue.classList.contains("queue_send")) {
-      refs.btnQueue.textContent = 'REMOVE FROM QUEUE'
-      refs.btnQueue.classList.replace("queue_send", "queue_remove")
-
-      sendQueueToStorage()
-    } else if (refs.btnQueue.classList.contains("queue_remove")) {
-      refs.btnQueue.textContent = 'ADD TO QUEUE'  
-      refs.btnQueue.classList.replace("queue_remove", "queue_send")
-
-      removeQueueFilm(dataCurentFilm)
-    }
-
-    refs.btnQueue.textContent = 'ADD TO QUEUE'  
-    refs.btnQueue.classList.replace("queue_remove", "queue_send")
-  }
-
-  function removeQueueFilm(currentFilm) {
-      try {
-        const getQueueFromStorage = localStorage.getItem("QueueMovies")
-        const getQueueArray = JSON.parse(getQueueFromStorage)
-
-        const queueFilmIndex = getQueueArray.findIndex(value => value.id === currentFilm.id);
-        getQueueArray.splice(queueFilmIndex, 1)
-        localStorage.setItem("QueueMovies", JSON.stringify(getQueueArray))
-
-    } catch (error) {
-      // console.error('Get state error: ', error.message);
-    }
-  }
-///////////////////end of local-storage ///////////
-
-  refs.closeBtn.addEventListener('click', onCloseModal);
+  closeBtn.addEventListener('click', onCloseModal);
   window.addEventListener('keydown', onCloseModalEsc);
 }
 
 function onCloseModal() {
   const iframeContainer = document.querySelector('.iframe-container');
   const trailerContainer = document.querySelector('.film__info-wrapper');
+
   handleBackButtonClick(iframeContainer, trailerContainer);
+
   modalFilm.close();
-  refs.closeBtn.removeEventListener('click', onCloseModal);
+
+  closeBtn.removeEventListener('click', onCloseModal);
   trailerButtonRef.removeEventListener('click', handleTrailerButtonClick);
   window.removeEventListener('keydown', onCloseModalEsc);
-
-
-  //////////Примусове перезавантаження сторінки /////////////////////////////////
-  // window.location.reload()
 }
 
-function onCloseModalEsc(e) {
-  if (e.code === 'Escape') {
+function onCloseModalEsc(evt) {
+  if (evt.code === 'Escape') {
     modalFilm.close();
 
-    refs.closeBtn.removeEventListener('click', onCloseModal);
+    closeBtn.removeEventListener('click', onCloseModal);
     window.removeEventListener('keydown', onCloseModalEsc);
   }
-}
-
-function getFilmData(filmId) {
-  const filmList = storageLocal.load('film-current-page');
-  return filmList.find(film => film.id === Number(filmId));
 }
 
 ////////////// checks for button /////////////////
 
 function checkWatchedStorage(currentFilm) {
   try {
-    const getWatchedFromStorage = localStorage.getItem("WatchedMovies")
-    const getWatchedArray = JSON.parse(getWatchedFromStorage)
-    const checkWatchedStorage = getWatchedArray.find(option => option.id === currentFilm.id);
-        if (checkWatchedStorage) {
-          refs.btnWatched.classList.replace("watched_send", "watched_remove")
-          refs.btnWatched.textContent = 'REMOVE FROM WATCHED'
-        } else {
-          refs.btnWatched.classList.replace("watched_remove", "watched_send")
-          refs.btnWatched.textContent = 'ADD TO WATCHED'
-        }
-    } catch (error) {
-      // console.error('Get state error: ', error.message);
-      refs.btnWatched.classList.replace("watched_remove", "watched_send")
+    const getWatchedFromStorage = localStorage.getItem('WatchedMovies');
+    const getWatchedArray = JSON.parse(getWatchedFromStorage);
+    const checkWatchedStorage = getWatchedArray.find(
+      option => option.id === currentFilm.id
+    );
+    if (checkWatchedStorage) {
+      btnWatched.classList.replace('watched_send', 'watched_remove');
+      btnWatched.textContent = 'REMOVE FROM WATCHED';
+    } else {
+      btnWatched.classList.replace('watched_remove', 'watched_send');
+      btnWatched.textContent = 'ADD TO WATCHED';
     }
+  } catch (error) {
+    // console.error('Get state error: ', error.message);
+    btnWatched.classList.replace('watched_remove', 'watched_send');
+  }
 }
 
 function checkQueueStorage(currentFilm) {
   try {
-    const getQueueFromStorage = localStorage.getItem("QueueMovies")
-    const getQueueArray = JSON.parse(getQueueFromStorage)
-    const checkQueueStorage = getQueueArray.find(option => option.id === currentFilm.id);
-        if (checkQueueStorage) {
-          refs.btnQueue.classList.replace("queue_send", "queue_remove")
-          refs.btnQueue.textContent = 'REMOVE FROM QUEUE'
-        } else {
-          refs.btnQueue.classList.replace("queue_remove", "queue_send")
-          refs.btnQueue.textContent = 'ADD TO QUEUE'
-        }
-    } catch (error) {
-      // console.error('Get state error: ', error.message);
-      refs.btnQueue.classList.replace("queue_remove", "queue_send")
+    const getQueueFromStorage = localStorage.getItem('QueueMovies');
+    const getQueueArray = JSON.parse(getQueueFromStorage);
+    const checkQueueStorage = getQueueArray.find(
+      option => option.id === currentFilm.id
+    );
+    if (checkQueueStorage) {
+      btnQueue.classList.replace('queue_send', 'queue_remove');
+      btnQueue.textContent = 'REMOVE FROM QUEUE';
+    } else {
+      btnQueue.classList.replace('queue_remove', 'queue_send');
+      btnQueue.textContent = 'ADD TO QUEUE';
     }
+  } catch (error) {
+    // console.error('Get state error: ', error.message);
+    btnQueue.classList.replace('queue_remove', 'queue_send');
+  }
 }

@@ -1,4 +1,6 @@
-// import getGenre from '../genres-id';
+import { setCurrentID } from './common';
+import { KEY_CURRENT_ID, KEY_WATCHED, KEY_QUEUE } from './constants';
+
 const dataDefault = {
   adult: false,
   backdrop_path: '/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg',
@@ -55,10 +57,6 @@ export default class ModalFilm {
     refs.body = document.querySelector('body');
     refs.modal = document.querySelector('[data-modal]');
     refs.modalCloseBtn = document.querySelector('[data-modal-close]');
-    // id="film__poster-path"  // id="film__title"
-    // id="film__vote-average" // id="film__vote-count"
-    // id="film__popularity"   // id="film__original-title"
-    // id="film__genre"        // id="film__overview"
     refs.posterPath = document.querySelector('#film__poster-path');
     refs.title = document.querySelector('#film__title');
     refs.voteAverage = document.querySelector('#film__vote-average');
@@ -68,7 +66,8 @@ export default class ModalFilm {
     refs.genre = document.querySelector('#film__genre');
     refs.overview = document.querySelector('#film__overview');
     refs.trailer = document.querySelector('#trailer');
-    refs.filmIinfoWrapper = document.querySelector('.film__info-wrapper');
+    refs.btnWatched = document.querySelector('.btn_watched');
+    refs.btnQueue = document.querySelector('.btn_queue');
 
     return refs;
   }
@@ -76,12 +75,29 @@ export default class ModalFilm {
   open() {
     this.refs.modal.classList.remove('is-hidden');
     this.refs.body.classList.add('body--modal-open');
-
   }
 
   close() {
     this.refs.modal.classList.add('is-hidden');
     this.refs.body.classList.remove('body--modal-open');
+  }
+
+  checkInStore(key) {
+    try {
+      const dataStore = JSON.parse(localStorage.getItem(key));
+      if (!dataStore) return `add to ${key}`;
+      const id = localStorage.getItem(KEY_CURRENT_ID);
+      return dataStore.find(data => data.id === Number(id))
+        ? `remove from ${key}`
+        : `add to ${key}`;
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  rerenderBtnWrapper() {
+    this.refs.btnWatched.textContent = this.checkInStore(KEY_WATCHED);
+    this.refs.btnQueue.textContent = this.checkInStore(KEY_QUEUE);
   }
 
   modifyDataFilm(dataImport = dataDefault) {
@@ -110,10 +126,17 @@ export default class ModalFilm {
     this.refs.overview.textContent = `${overview}`;
     this.refs.trailer.setAttribute('data-movie-id', id);
 
-    if(poster_path===null){ this.refs.posterPath.src='https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'}
-    if(overview===''){this.refs.overview.textContent='No information'}
-  };
-    
+    setCurrentID(id);
+    this.rerenderBtnWrapper();
+
+    if (poster_path === null) {
+      this.refs.posterPath.src =
+        'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg';
+    }
+    if (overview === '') {
+      this.refs.overview.textContent = 'No information';
+    }
+  }
 
   get dataFilm() {
     return this.data;

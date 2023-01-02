@@ -1,9 +1,7 @@
 import { renderPagination, renderFilmCards, goUp } from './common.js';
+import { KEY_QUEUE, KEY_WATCHED } from './constants.js';
 
-const KEY_WATCHED = 'WatchedMovies';
-const KEY_QUEUE = 'QueueMovies';
 const PER_PAGE = 6;
-const NEED_STORE = true;
 
 let allData = [];
 let currentPage = 1;
@@ -12,6 +10,7 @@ let currentProcess = 1;
 
 const queueRef = document.querySelector('.filter__item-queue');
 const watchedRef = document.querySelector('.filter__item-watched');
+const listRef = document.querySelector('.filter__list');
 const pagLibraryRef = document.querySelector('.js-pagination-library');
 const emptyRef = document.querySelector('.empty-list');
 const emptyTitleRef = document.querySelector('.empty-title');
@@ -21,30 +20,36 @@ window.addEventListener('load', () => {
   queueRef.click();
 });
 
-queueRef.addEventListener('click', onBtnClick);
-watchedRef.addEventListener('click', onBtnClick);
+listRef.addEventListener('click', onBtnClick);
 
 function onBtnClick(evt) {
   const target = evt.target;
 
-  currentProcess = target.classList.contains('filter__item-queue') ? 1 : 0;
+  if (target.tagName !== 'LI') return;
+
+  const key = target.name;
+
   currentPage = 1;
 
-  let key = currentProcess ? KEY_QUEUE : KEY_WATCHED;
+  console.log(paginateAllData(key));
 
-  console.log(evt);
-
-  if (currentProcess) {
-    queueRef.classList.add('active');
-    watchedRef.classList.remove('active');
-  } else {
-    watchedRef.classList.add('active');
-    queueRef.classList.remove('active');
+  switch (key) {
+    case KEY_QUEUE:
+      queueRef.classList.add('active');
+      watchedRef.classList.remove('active');
+      break;
+    case KEY_WATCHED:
+      watchedRef.classList.add('active');
+      queueRef.classList.remove('active');
+      break;
   }
+
   emptyRef.classList.add('is-hidden');
 
   try {
     allData = [...paginateAllData(key)];
+
+    console.log(allData);
 
     if (!allData || !allData.length) {
       emptyRef.classList.remove('is-hidden');
@@ -52,7 +57,7 @@ function onBtnClick(evt) {
       return;
     }
 
-    renderFilmCards(allData[currentPage - 1], galleryLibrary, NEED_STORE);
+    renderFilmCards(allData[currentPage - 1], galleryLibrary);
     renderPagination(currentPage, allData.length, pagLibraryRef);
   } catch (error) {
     emptyRef.classList.remove('is-hidden');
@@ -64,6 +69,8 @@ function paginateAllData(key) {
   try {
     let filmStorage = localStorage.getItem(key);
 
+    console.log('In Pagination All: ', filmStorage);
+
     if (filmStorage) {
       filmStorage = JSON.parse(filmStorage);
 
@@ -73,6 +80,7 @@ function paginateAllData(key) {
           i + PER_PAGE < filmStorage.length ? i + PER_PAGE : filmStorage.length;
         allStorageDataByPages.push(filmStorage.slice(i, end));
       }
+      console.log(allStorageDataByPages);
       return allStorageDataByPages;
     }
   } catch (error) {
@@ -95,10 +103,6 @@ function onClickPagination(evt) {
     currentPage = Number(target.textContent);
 
   try {
-    if (!allData || !allData.length) {
-      throw 'Your film list is empty';
-    }
-
     renderFilmCards(allData[currentPage - 1], galleryLibrary);
     renderPagination(currentPage, allData.length, pagLibraryRef);
 

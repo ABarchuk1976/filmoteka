@@ -8,4 +8,3 @@ import './js/trailer.js';
 import './js/btn-scroll.js';
 import './js/spinner.js';
 import './js/local-storage.js';
-import './js/local-storage-set.js';

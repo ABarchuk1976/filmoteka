@@ -1,11 +1,19 @@
-import * as storageLocal from './local-storage.js';
-
+import { setStore, getStore, removeStore } from './local-storage.js';
 import { getGenre } from './modal-film';
 import { btnUp, btnDown } from './btn-scroll.js';
 
 const LEFT_ARROW = '&#8592;';
 const RIGHT_ARROW = '&#8594;';
-import { IMG_PATH, SMALL_SIZE, NO_IMAGE } from './constants.js';
+import {
+  IMG_PATH,
+  SMALL_SIZE,
+  NO_IMAGE,
+  FILM_CURRENT_PAGE,
+  KEY_QUEUE,
+  KEY_WATCHED,
+  FILM_CURRENT_PAGE,
+  KEY_CURRENT_ID,
+} from './constants.js';
 
 const searchQuery = document.querySelector('.header__input');
 
@@ -59,7 +67,7 @@ export function renderPagination(page, pages, ref) {
 }
 
 // ref = where need to render
-export function renderFilmCards(data, ref, needStore = false) {
+export function renderFilmCards(data, ref) {
   ref.innerHTML = '';
   let markup = data
     .map(({ id, poster_path, genre_ids, title, release_date }) => {
@@ -92,6 +100,51 @@ export function renderFilmCards(data, ref, needStore = false) {
   ref.innerHTML = markup;
 
   //
-  if (needStore) storageLocal.save(storageLocal.FILM_CURRENT_PAGE, [...data]);
+
+  setStore(FILM_CURRENT_PAGE, [...data]);
   //
+}
+
+export function getFilmData(filmId) {
+  let filmList = [];
+
+  let fromStore = getStore(KEY_QUEUE);
+  if (fromStore) filmList = [...fromStore];
+
+  fromStore = getStore(KEY_WATCHED);
+  if (fromStore) filmList = [...filmList, ...fromStore];
+
+  fromStore = getStore(FILM_CURRENT_PAGE);
+  if (fromStore) filmList = [...filmList, ...fromStore];
+
+  return filmList.find(film => film.id === Number(filmId));
+}
+
+export function changeStore(key) {
+  let newStore = [];
+
+  try {
+    const dataStore = JSON.parse(localStorage.getItem(key));
+
+    console.log(dataStore);
+    if (!dataStore) {
+      newStore.push(getFilmData(getStore(KEY_CURRENT_ID)));
+    } else {
+      const idx = dataStore.indexOf(data => (data.id = idx));
+      if (idx === -1) {
+        newStore.push(getFilmData(idx));
+      } else {
+        dataStore.splice(idx, 1);
+        newStore = [...dataStore];
+      }
+    }
+
+    newStore[0] ? setStore(key, newStore) : removeStore(key);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export function setCurrentID(id) {
+  setStore(KEY_CURRENT_ID, id);
 }

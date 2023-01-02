@@ -10,7 +10,10 @@ export const TRENDING = 'trending';
 export const GENRES = 'genre/movie/list';
 export const ADULT = false;
 export const NO_IMAGE = noImage;
-export const IN_MAIN_POPULAR = 1;
-export const IN_MAIN_SEARCH = 2;
-export const IN_LIBRARY_QUEUE = 11;
-export const IN_LIBRARY_WATCHED = 12;
+
+export const FILM_CURRENT_PAGE = 'film-current-page';
+
+export const KEY_WATCHED = 'watched';
+export const KEY_QUEUE = 'queue';
+
+export const KEY_CURRENT_ID = 'id';

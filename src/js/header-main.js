@@ -65,7 +65,6 @@ function processingAPIData(pageAPI, process) {
     () =>
       getAPIData(pageAPI, process)
         .then(({ page, results, total_pages: pages }) => {
-          console.log('Data: ', page, results, pages);
           renderFilmCards(results, galleryRef);
           renderPagination(page, pages, pagRef);
           if (!pages)
