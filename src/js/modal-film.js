@@ -1,5 +1,6 @@
 import { setCurrentID } from './common';
 import { KEY_CURRENT_ID, KEY_WATCHED, KEY_QUEUE } from './constants';
+import { getStore } from './local-storage';
 
 const dataDefault = {
   adult: false,
@@ -84,9 +85,9 @@ export default class ModalFilm {
 
   checkInStore(key) {
     try {
-      const dataStore = JSON.parse(localStorage.getItem(key));
+      const dataStore = getStore(key);
       if (!dataStore) return `add to ${key}`;
-      const id = localStorage.getItem(KEY_CURRENT_ID);
+      const id = getStore(KEY_CURRENT_ID);
       return dataStore.find(data => data.id === Number(id))
         ? `remove from ${key}`
         : `add to ${key}`;

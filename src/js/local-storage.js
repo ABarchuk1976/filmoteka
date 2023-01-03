@@ -10,7 +10,7 @@ export const setStore = (key, value) => {
 export const getStore = key => {
   try {
     const serializedState = localStorage.getItem(key);
-    return serializedState ? JSON.parse(serializedState) : undefined;
+    return serializedState ? JSON.parse(serializedState) : [];
   } catch (error) {
     console.error('Get state error: ', error.message);
   }

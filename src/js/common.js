@@ -121,25 +121,22 @@ export function getFilmData(filmId) {
 }
 
 export function changeStore(key) {
-  let newStore = [];
-
   try {
-    const dataStore = JSON.parse(localStorage.getItem(key));
+    const dataStore = getStore(key);
 
-    console.log(dataStore);
-    if (!dataStore) {
-      newStore.push(getFilmData(getStore(KEY_CURRENT_ID)));
+    console.log(dataStore, getStore(KEY_CURRENT_ID));
+    const currentId = getStore(KEY_CURRENT_ID);
+    const idx = dataStore.findIndex(({ id }) => id === currentId);
+
+    console.log('Index: ', idx);
+
+    if (idx === -1) {
+      dataStore.push(getFilmData(currentId));
     } else {
-      const idx = dataStore.indexOf(data => (data.id = idx));
-      if (idx === -1) {
-        newStore.push(getFilmData(idx));
-      } else {
-        dataStore.splice(idx, 1);
-        newStore = [...dataStore];
-      }
+      dataStore.splice(idx, 1);
     }
 
-    newStore[0] ? setStore(key, newStore) : removeStore(key);
+    dataStore[0] ? setStore(key, dataStore) : removeStore(key);
   } catch (error) {
     console.log(error.message);
   }
