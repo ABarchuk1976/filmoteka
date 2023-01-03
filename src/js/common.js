@@ -141,7 +141,3 @@ export function changeStore(key) {
     console.log(error.message);
   }
 }
-
-export function setCurrentID(id) {
-  setStore(KEY_CURRENT_ID, id);
-}

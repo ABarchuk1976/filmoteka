@@ -4,19 +4,17 @@ import { changeStore, getFilmData } from './common.js';
 
 const gallery = document.querySelector('.js-gallery-library');
 const closeBtn = document.querySelector('[data-modal-close]');
+const overlay = document.querySelector('[data-modal');
 const btnWrapperRef = document.querySelector('.btn__wrapper');
 // const btnWatched = document.querySelector('.btn_watched');
 // const btnQueue = document.querySelector('.btn_queue');
-const activeLibraryBtn = document.querySelector(
-  '.filter__item>.filter__button--active'
-);
 
 const modalFilm = new ModalFilm();
 
 gallery.addEventListener('click', onOpenModal);
 closeBtn.addEventListener('click', onCloseModal);
 window.addEventListener('keydown', onCloseModalEsc);
-document.addEventListener('click', onOverlayClose);
+overlay.addEventListener('click', onOverlayClose);
 
 function onOpenModal(evt) {
   const { id, nodeName, name } = evt.target;

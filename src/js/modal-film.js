@@ -1,6 +1,5 @@
-import { setCurrentID } from './common';
 import { KEY_CURRENT_ID, KEY_WATCHED, KEY_QUEUE } from './constants';
-import { getStore } from './local-storage';
+import { getStore, setStore } from './local-storage';
 
 const dataDefault = {
   adult: false,
@@ -83,6 +82,10 @@ export default class ModalFilm {
     this.refs.body.classList.remove('body--modal-open');
   }
 
+  setCurrentID(id) {
+    setStore(KEY_CURRENT_ID, id);
+  }
+
   checkInStore(key) {
     try {
       const dataStore = getStore(key);
@@ -127,7 +130,7 @@ export default class ModalFilm {
     this.refs.overview.textContent = `${overview}`;
     this.refs.trailer.setAttribute('data-movie-id', id);
 
-    setCurrentID(id);
+    this.setCurrentID(id);
     this.rerenderBtnWrapper();
 
     if (poster_path === null) {

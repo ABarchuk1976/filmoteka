@@ -39,18 +39,17 @@ function onOpenModal(evt) {
   modalFilm.open();
 
   btnWrapperRef.addEventListener('click', onBtnClick);
-
-  function onBtnClick(evt) {
-    const { nodeName, name: key } = evt.target;
-    if (nodeName !== 'BUTTON') return;
-    changeStore(key);
-    modalFilm.rerenderBtnWrapper();
-  }
-  ///////////////////end of local-storage ///////////
-
-  closeBtn.addEventListener('click', onCloseModal);
-  window.addEventListener('keydown', onCloseModalEsc);
 }
+
+function onBtnClick(evt) {
+  const { nodeName, name: key } = evt.target;
+  if (nodeName !== 'BUTTON') return;
+  changeStore(key);
+  modalFilm.rerenderBtnWrapper();
+}
+
+closeBtn.addEventListener('click', onCloseModal);
+window.addEventListener('keydown', onCloseModalEsc);
 
 function onCloseModal() {
   const iframeContainer = document.querySelector('.iframe-container');
