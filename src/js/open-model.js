@@ -8,8 +8,6 @@ import { changeStore, getFilmData } from './common.js';
 
 const gallery = document.querySelector('.js-gallery');
 const closeBtn = document.querySelector('[data-modal-close]');
-const modal = document.querySelector('[data-modal]');
-const body = document.querySelector('body');
 const btnWrapperRef = document.querySelector('.btn__wrapper');
 
 const modalFilm = new ModalFilm();
@@ -22,6 +20,10 @@ function onBtnClick(evt) {
 }
 
 function onOpenModal(evt) {
+  window.addEventListener('keydown', onCloseModalEsc);
+  document.addEventListener('click', onOverlayClose);
+  closeBtn.addEventListener('click', closeModal);
+
   const { id, nodeName, name } = evt.target;
   evt.preventDefault();
 
@@ -38,31 +40,24 @@ function onOpenModal(evt) {
 }
 
 function closeModal() {
-  window.removeEventListener('keydown', onCloseModalEsc);
-  modal.classList.add('is-hidden');
-  body.classList.remove('body--modal-open');
-
+  modalFilm.close();
   trailerButtonRef.removeEventListener('click', handleTrailerButtonClick);
+  window.removeEventListener('keydown', onCloseModalEsc);
+  document.removeEventListener('click', onOverlayClose);
+  closeBtn.removeEventListener('click', closeModal);
 }
 
-function onOverlayClose(event) {
-  if (event.target === event.currentTarget) {
-    closeModal();
-  }
+function onOverlayClose(evt) {
+  if (evt.target.classList.contains('backdrop')) closeModal();
 }
 
 function onCloseModalEsc(evt) {
-  console.log(evt.code);
   if (evt.code === 'Escape') {
     closeModal();
   }
 }
 
 gallery.addEventListener('click', onOpenModal);
-
-document.addEventListener('click', onOverlayClose);
-window.addEventListener('keydown', onCloseModalEsc);
-closeBtn.addEventListener('click', closeModal);
 
 ////////////// checks for button /////////////////
 

@@ -124,7 +124,6 @@ export function changeStore(key) {
   try {
     const dataStore = getStore(key);
 
-    console.log(dataStore, getStore(KEY_CURRENT_ID));
     const currentId = getStore(KEY_CURRENT_ID);
     const idx = dataStore.findIndex(({ id }) => id === currentId);
 

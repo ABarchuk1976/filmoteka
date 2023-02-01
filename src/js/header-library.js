@@ -41,8 +41,6 @@ function onBtnClick(evt) {
 
   allData = [...paginateAllData(key)];
 
-  console.log('In header-library: ', allData);
-
   if (!allData.length) {
     clearGallery();
     emptyRef.classList.remove('is-hidden');
@@ -52,8 +50,6 @@ function onBtnClick(evt) {
   currentPage = 1;
 
   try {
-    console.log(allData);
-
     renderFilmCards(allData[currentPage - 1], galleryLibrary);
     renderPagination(currentPage, allData.length, pagLibraryRef);
   } catch (error) {
@@ -80,7 +76,6 @@ function paginateAllData(key) {
         i + PER_PAGE < filmStorage.length ? i + PER_PAGE : filmStorage.length;
       allStorageDataByPages.push(filmStorage.slice(i, end));
     }
-    console.log('allStorageDataByPages: ', allStorageDataByPages);
     return allStorageDataByPages;
   } catch (error) {
     return [];

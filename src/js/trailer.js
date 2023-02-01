@@ -10,27 +10,19 @@ export const getMovieTrailer = async movieId => {
     const response = await axios.get(
       `${API}${MEDIA_TYPE}/${movieId}/videos?${searchParams}`
     );
-    console.log(
-      'here',
-      `${API}${MEDIA_TYPE}/${movieId}/videos?${searchParams}`
-    );
     if (response.status !== 200) {
       throw new Error(response.status);
     }
 
     return response.data;
   } catch (error) {
-    // console.log('Підставити картинку, сервер терміново недоступний');
+    console.log(error.message);
   }
 };
 
 export const trailerButtonRef = document.getElementById('trailer');
 const trailerErrorContainer = document.getElementById('trailer-error');
 const spinner = document.querySelector('.spinner');
-
-// if (!trailerButtonRef) {
-//   return;
-// }
 
 export const handleBackButtonClick = (iframeContainer, trailerContainer) => {
   trailerContainer.classList.remove('display-none');
