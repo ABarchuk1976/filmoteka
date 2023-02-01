@@ -6,8 +6,6 @@ const gallery = document.querySelector('.js-gallery-library');
 const closeBtn = document.querySelector('[data-modal-close]');
 const overlay = document.querySelector('[data-modal');
 const btnWrapperRef = document.querySelector('.btn__wrapper');
-// const btnWatched = document.querySelector('.btn_watched');
-// const btnQueue = document.querySelector('.btn_queue');
 
 const modalFilm = new ModalFilm();
 

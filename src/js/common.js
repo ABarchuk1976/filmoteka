@@ -128,8 +128,6 @@ export function changeStore(key) {
     const currentId = getStore(KEY_CURRENT_ID);
     const idx = dataStore.findIndex(({ id }) => id === currentId);
 
-    console.log('Index: ', idx);
-
     if (idx === -1) {
       dataStore.push(getFilmData(currentId));
     } else {

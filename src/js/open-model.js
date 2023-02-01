@@ -1,4 +1,3 @@
-import { getStore, setStore, removeStore } from './local-storage.js';
 import ModalFilm from './modal-film';
 import {
   handleBackButtonClick,
@@ -9,26 +8,23 @@ import { changeStore, getFilmData } from './common.js';
 
 const gallery = document.querySelector('.js-gallery');
 const closeBtn = document.querySelector('[data-modal-close]');
+const modal = document.querySelector('[data-modal]');
+const body = document.querySelector('body');
 const btnWrapperRef = document.querySelector('.btn__wrapper');
-// const btnWatched = document.querySelector('.btn_watched');
-// const btnQueue = document.querySelector('.btn_queue');
 
 const modalFilm = new ModalFilm();
 
-gallery.addEventListener('click', onOpenModal);
-closeBtn.addEventListener('click', onCloseModal);
-window.addEventListener('keydown', onCloseModalEsc);
-
-function onOverlayClose(event) {
-  if (!event.target.closest('.modal') && event.target.closest('.backdrop')) {
-    onCloseModal();
-  }
+function onBtnClick(evt) {
+  const { nodeName, name: key } = evt.target;
+  if (nodeName !== 'BUTTON') return;
+  changeStore(key);
+  modalFilm.rerenderBtnWrapper();
 }
-document.addEventListener('click', onOverlayClose);
 
 function onOpenModal(evt) {
   const { id, nodeName, name } = evt.target;
   evt.preventDefault();
+
   trailerButtonRef.addEventListener('click', handleTrailerButtonClick);
 
   if (nodeName !== 'IMG') return;
@@ -41,37 +37,32 @@ function onOpenModal(evt) {
   btnWrapperRef.addEventListener('click', onBtnClick);
 }
 
-function onBtnClick(evt) {
-  const { nodeName, name: key } = evt.target;
-  if (nodeName !== 'BUTTON') return;
-  changeStore(key);
-  modalFilm.rerenderBtnWrapper();
+function closeModal() {
+  window.removeEventListener('keydown', onCloseModalEsc);
+  modal.classList.add('is-hidden');
+  body.classList.remove('body--modal-open');
+
+  trailerButtonRef.removeEventListener('click', handleTrailerButtonClick);
 }
 
-closeBtn.addEventListener('click', onCloseModal);
-window.addEventListener('keydown', onCloseModalEsc);
-
-function onCloseModal() {
-  const iframeContainer = document.querySelector('.iframe-container');
-  const trailerContainer = document.querySelector('.film__info-wrapper');
-
-  handleBackButtonClick(iframeContainer, trailerContainer);
-
-  modalFilm.close();
-
-  closeBtn.removeEventListener('click', onCloseModal);
-  trailerButtonRef.removeEventListener('click', handleTrailerButtonClick);
-  window.removeEventListener('keydown', onCloseModalEsc);
+function onOverlayClose(event) {
+  if (event.target === event.currentTarget) {
+    closeModal();
+  }
 }
 
 function onCloseModalEsc(evt) {
+  console.log(evt.code);
   if (evt.code === 'Escape') {
-    modalFilm.close();
-
-    closeBtn.removeEventListener('click', onCloseModal);
-    window.removeEventListener('keydown', onCloseModalEsc);
+    closeModal();
   }
 }
+
+gallery.addEventListener('click', onOpenModal);
+
+document.addEventListener('click', onOverlayClose);
+window.addEventListener('keydown', onCloseModalEsc);
+closeBtn.addEventListener('click', closeModal);
 
 ////////////// checks for button /////////////////
 
